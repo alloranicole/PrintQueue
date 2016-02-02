@@ -18,12 +18,15 @@ template <class Type>
 class waitingQueue : public queue<Type>
 {
      public:
-          void push(printRequestType pushMe);
-          //Overrides Queue's push function.
-          //The new push function should take into account
-          //pushMe's priority so that priority 1 comes before
-          //priority 2, priority 2 comes before priority 3, and
-          //items of the same priority are first-come-first-serve
+          void add(printRequestType pushMe);
+          //this function accesses the queue and uses a
+          //combination of push and pull to insert a new
+          //printRequestType item into the list so that
+          //the following rules are used:
+               //1. Priority 1 before Priority 2
+               //2. Priority 2 before Priority 3
+               //3. Items of the same priority are 
+               //   first come first served.
           //Postcondition:
                //the queue now contains pushMe in correct
                //priority order.
