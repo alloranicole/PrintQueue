@@ -42,7 +42,7 @@ printerListType::setPrinterBusy(int printerID, printRequestType printJob,
                  printJob.getPages() << " pages, at time " << clock << endl;
 }
 
-printerListType::updatePrinters(int clock){
+printerListType::updatePrinters(int clock, ostream& outfile){
       
       for(int i = 0; i < numOfPrinters; i++)
          if(!printers[i].isFree()){

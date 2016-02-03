@@ -36,7 +36,7 @@ class printerListType{
             //Function to update the status of each printer
             //Postcondition: the pagesToPrint is decremented by the printRate
             //If pagesToPrint is zero or less the printer is set to "free"
-            void updatePrinters(int clock);
+            void updatePrinters(int clock, ostream& outfile);
       
       private:
             int numOfPrinters;
