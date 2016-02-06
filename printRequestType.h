@@ -10,12 +10,22 @@
 class printRequestType
 {
      public:
-          void printRequestType(int numPage, int numPrior, int numReq);
+          void setPrintRequestType(int numPage, int numReq);
           //Initializes an instance of this class and uses the parameters given.
           //Postcondition:
                //NumberOfPages = numPage;
-               //Priority = numPrior;
+               //Priority =
+                    //1 if numPage <= 10
+                    //2 if 10 < numPage <= 20
+                    //3 if 20 < numPage
                //RequestNumber = numReq;
+
+          printRequestType();
+          //Default constructor. Calls setPrintRequestType with all 0.
+          //Post condition:
+               //NumberOfPages = 0;
+               //Priority = 1;
+               //RequestNumber = 0;
 
           int getNumberOfPages() const;
           //returns the value of the private variable NumberOfPages.

@@ -8,29 +8,45 @@
 */
 
 #include <iostream>
-#include <string>
-#include <cstdlib>
+
+#include "printRequestType.h"
 
 using namespace std;
 
-void printRequestType::printRequestType(int numPage, int numPrior, int numReq)
+void printRequestType::setPrintRequestType(int numPage, int numReq)
 {
      NumberOfPages = numPage;
-     Priority = numPrior;
+     if(numPage <= 10)
+     {
+          Priority = 1;
+     }
+     else if(numPage <= 20)
+     {
+          Priority = 2;
+     }
+     else
+     {
+          Priority = 3;
+     }
      RequestNumber = numReq;
 }
 
-int printRequestType::getNumberOfPages()
+printRequestType::printRequestType()
+{
+     setPrintRequestType(0,0);
+}
+
+int printRequestType::getNumberOfPages() const
 {
      return NumberOfPages;
 }
 
-int printRequestType::getPriority()
+int printRequestType::getPriority() const
 {
      return Priority;
 }
 
-int printRequestType::getRequestNumber()
+int printRequestType::getRequestNumber() const
 {
      return RequestNumber;
 }
