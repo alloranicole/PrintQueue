@@ -6,13 +6,15 @@
           of printRequestType items. This queue is
           special in one way: it must be able to
           reorganize itself so that it is sorted by
-          the priority of each printRequestType item.
+          the priority of each printRequestType item
+          before returning to the standard first-in
+          first-out model.
      Notes for grading:
 */
 
 #include <iostream>
 #include <queue>
-#include "printRequestType"
+#include "printRequestType.h"
 
 template <class Type>
 class waitingQueue : public queue<Type>
@@ -30,7 +32,31 @@ class waitingQueue : public queue<Type>
           //Postcondition:
                //the queue now contains pushMe in correct
                //priority order.
+          bool queueEmpty();
+          //calls the emptry() function of queue for waiting
+          //postcondition:
+               //return waiting.empty()
+
+          unsigned int queueSize();
+          //calls the size() function of queue for waiting
+          //postcondition:
+               //return waiting.size()
+
+          printRequestType queueFront();
+          //calls the front() function of queue for waiting
+          //postcondition:
+               //return waiting.front()
+
+          printRequestType queueBack();
+          //calls the back() function of queue for waiting
+          //postcondition:
+               //return waiting.back()
+
+          void queuePop();
+          //calls the pop() function of queue for waiting
+          //postcondition:
+               //waiting pops its front item
 
      private:
-          Type *list;
+          queue<printRequestType> waiting;
 };
