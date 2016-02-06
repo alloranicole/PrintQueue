@@ -39,6 +39,12 @@ class printRequestType
           //returns the value of the private variable RequestNumber.
           //Postcondition: Value of RequestNumber is returned.
 
+          void print();
+          //displays all of the vaiables for testing purposes or
+          //if anyone would like to see them.
+          //postcondition: NumberOfPages, Priority, and RequestNumber
+               //are printed out to the screen.
+
      private:
           int NumberOfPages;
           int Priority;

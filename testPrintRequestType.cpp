@@ -18,16 +18,7 @@ int main()
      requestTwo.setPrintRequestType(15,2);
      requestThree.setPrintRequestType(25,3);
 
-     cout << "Number of pages:" << endl;
-     cout << "requestOne = " << requestOne.getNumberOfPages() << endl;
-     cout << "requestTwo = " << requestTwo.getNumberOfPages() << endl;
-     cout << "requestThree = " << requestThree.getNumberOfPages() << endl;
-     cout << "Priority:" << endl;
-     cout << "requestOne = " << requestOne.getPriority() << endl;
-     cout << "requestTwo = " << requestTwo.getPriority() << endl;
-     cout << "requestThree = " << requestThree.getPriority() << endl;
-     cout << "Request Number:" << endl;
-     cout << "requestOne = " << requestOne.getRequestNumber() << endl;
-     cout << "requestTwo = " << requestTwo.getRequestNumber() << endl;
-     cout << "requestThree = " << requestThree.getRequestNumber() << endl;    
+     requestOne.print();
+     requestTwo.print();
+     requestThree.print();   
 }

@@ -50,3 +50,10 @@ int printRequestType::getRequestNumber() const
 {
      return RequestNumber;
 }
+
+void printRequestType::print()
+{
+     cout << "Print Request number " << RequestNumber;
+     cout << " has " << NumberOfPages << " page(s) and";
+     cout << " has a priority of " << Priority << "." << endl;
+}

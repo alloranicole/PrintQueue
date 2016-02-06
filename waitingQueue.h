@@ -16,8 +16,9 @@
 #include <queue>
 #include "printRequestType.h"
 
-template <class Type>
-class waitingQueue : public queue<Type>
+using namespace std; 
+
+class waitingQueue: public queue<printRequestType>
 {
      public:
           void add(printRequestType pushMe);

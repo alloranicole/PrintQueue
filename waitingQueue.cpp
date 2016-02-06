@@ -12,7 +12,11 @@
      Notes for grading:
 */
 
+#include <queue>
 #include "printRequestType.h"
+#include "waitingQueue.h"
+
+using namespace std; 
 
 void waitingQueue::add(printRequestType pushMe)
 {
@@ -44,15 +48,18 @@ void waitingQueue::add(printRequestType pushMe)
                count++;
           }
      
+          //insert pushMe
           temp.push(pushMe);
      
-          while(cout < size)
+          //insert any remaining items from waiting
+          while(count < size)
           {
                temp.push(waiting.front());
                waiting.pop();
                count++;
           }
 
+          //establish now correct waiting queue
           waiting = temp;
      }
 }
