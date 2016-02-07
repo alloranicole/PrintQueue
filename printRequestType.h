@@ -7,6 +7,9 @@
      Notes for grading:
 */
 
+#ifndef H_printRequestType
+#define H_printRequestType
+
 class printRequestType
 {
      public:
@@ -50,3 +53,5 @@ class printRequestType
           int Priority;
           int RequestNumber;
 };
+
+#endif

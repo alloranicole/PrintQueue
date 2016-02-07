@@ -19,13 +19,30 @@ int main()
 
      cout << "Is testWaiting emptry? " << testWaiting.queueEmpty() << endl;
 
-     printRequestType testOne;
+     printRequestType testOne, testTwo, testThree, testFour;
      testOne.setPrintRequestType(5,1);
+     testTwo.setPrintRequestType(25,2);
+     testThree.setPrintRequestType(15,3);
+     testFour.setPrintRequestType(17,4);
 
      testOne.print();
+     testTwo.print();
+     testThree.print();
+     testFour.print();
 
      testWaiting.add(testOne);
+     testWaiting.add(testTwo);
+     testWaiting.add(testThree);
+     testWaiting.add(testFour);
 
-     cout << "testWaiting's front item is: " << endl;
-     testWaiting.queueFront().print();
+     cout << "The queue's size is: " << testWaiting.queueSize() << endl;
+     cout << "This is the order they print out:" << endl;
+     for(int i = 0; i < testWaiting.queueSize(); i++)
+     {
+          cout << "Front: ";
+          testWaiting.queueFront().print();
+          cout << "Back: ";
+          testWaiting.queueBack().print();
+          testWaiting.queuePop();
+     }
 }

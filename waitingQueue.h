@@ -22,42 +22,50 @@ class waitingQueue: public queue<printRequestType>
 {
      public:
           void add(printRequestType pushMe);
-          //this function accesses the queue and uses a
-          //combination of push and pull to insert a new
-          //printRequestType item into the list so that
-          //the following rules are used:
-               //1. Priority 1 before Priority 2
-               //2. Priority 2 before Priority 3
-               //3. Items of the same priority are 
-               //   first come first served.
+          //places pushMe in the queue representing
+          //the same priority
           //Postcondition:
-               //the queue now contains pushMe in correct
-               //priority order.
+               //pushMe is in priorityOne if priority = 1
+               //pushMe is in priorityTwo if priority = 2
+               //pushMe is in priorityThree if priority = 3
           bool queueEmpty();
-          //calls the emptry() function of queue for waiting
+          //uses emptry() to test if all three queues are
+          //emptry. if any queue has an item, false is returned
           //postcondition:
-               //return waiting.empty()
+               //return true if all queues are emptry
+               //return false if any queue has an item
 
           unsigned int queueSize();
-          //calls the size() function of queue for waiting
+          //adds the size of the three queues using size()
           //postcondition:
-               //return waiting.size()
+               //return the sum of the three queues' sizes
 
           printRequestType queueFront();
-          //calls the front() function of queue for waiting
+          //searches the queues from first to last to find 
+          //the first queue with an item. The front item of 
+          //that queue is returned.
           //postcondition:
-               //return waiting.front()
+               //front of first non-empty queue is returned
+               //message is given if queue was empty
 
           printRequestType queueBack();
-          //calls the back() function of queue for waiting
+          //searches the queues from last to first to find 
+          //the first queue with an item. The back item of 
+          //that queue is returned.
           //postcondition:
-               //return waiting.back()
+               //back of first non-empty queue is returned
+               //message is given if queue was empty
 
           void queuePop();
-          //calls the pop() function of queue for waiting
+          //searches the queues from first to last to find 
+          //the first queue with an item. The front item of 
+          //that queue is popped.
           //postcondition:
-               //waiting pops its front item
+               //front of first non-empty queue is popped
+               //message is given if queue was empty
 
      private:
-          queue<printRequestType> waiting;
+          queue<printRequestType> priorityOne;
+          queue<printRequestType> priorityTwo;
+          queue<printRequestType> priorityThree;
 };

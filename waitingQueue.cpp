@@ -13,78 +13,87 @@
 */
 
 #include <queue>
-#include "printRequestType.h"
 #include "waitingQueue.h"
+#include "printRequestType.h"
 
 using namespace std; 
 
 void waitingQueue::add(printRequestType pushMe)
 {
-     queue<printRequestType> temp;
-     bool spotFound = false;
-     unsigned int size = waiting.size(), count = 0;
-     
-     //no need to sort if one of the follow is true:
-     //1. queue is empty
-     //2. priority is 3 (highest priority)
-     if(waiting.empty() || pushMe.getPriority() == 3)
-     {
-          waiting.push(pushMe);
-     }
+     if(pushMe.getPriority() == 1)
+          priorityOne.push(pushMe);
+     else if(pushMe.getPriority() == 2)
+          priorityTwo.push(pushMe);
      else
-     {
-          //test if pushMe is supposed to be the first item
-          if(waiting.front().getPriority() > pushMe.getPriority())
-                spotFound = true;
-
-          //push onto temp and pop off of wait until insertion
-          //spot has been found or waiting is emptry
-          while(!spotFound && count < size)
-          {
-               temp.push(waiting.front());
-               waiting.pop();
-               if(waiting.front().getPriority() > pushMe.getPriority())
-                    spotFound = true;
-               count++;
-          }
-     
-          //insert pushMe
-          temp.push(pushMe);
-     
-          //insert any remaining items from waiting
-          while(count < size)
-          {
-               temp.push(waiting.front());
-               waiting.pop();
-               count++;
-          }
-
-          //establish now correct waiting queue
-          waiting = temp;
-     }
+          priorityThree.push(pushMe);
 }
 
 bool waitingQueue::queueEmpty()
 {
-     return waiting.empty();
+     if(priorityOne.empty())
+     {
+          if(priorityTwo.empty())
+          {
+               if(priorityThree.empty())
+               {
+                    return true;
+               }
+               else
+               {
+                    return false;
+               }
+          }
+          else
+          {
+               return false;
+          }
+     }
+     else
+     {
+          return false;
+     }
 }
 
 unsigned int waitingQueue::queueSize()
 {
-     return waiting.size();
+     unsigned int size = priorityOne.size();
+     size += priorityTwo.size();
+     size += priorityThree.size();
+     return size;
 }
 
 printRequestType waitingQueue::queueFront()
 {
-     return waiting.front();
+     if(!priorityOne.empty())
+          return priorityOne.front();
+     else if(!priorityTwo.empty())
+          return priorityTwo.front();
+     else if(!priorityThree.empty())
+          return priorityThree.front();
+     else
+          cout << "There is no front of an emptry queue." << endl;
 }
 
 printRequestType waitingQueue::queueBack()
 {
-     return waiting.back();
+     if(!priorityThree.empty())
+          return priorityThree.back();
+     else if(!priorityTwo.empty())
+          return priorityTwo.back();
+     else if(!priorityOne.empty())
+          return priorityOne.back();
+     else
+          cout << "There is no back of an empty queue." << endl;
 }
 
 void waitingQueue::queuePop()
 {
-     waiting.pop();
+     if(!priorityOne.empty())
+          priorityOne.pop();
+     else if(!priorityTwo.empty())
+          priorityTwo.pop();
+     else if(!priorityThree.empty())
+          priorityThree.pop();
+     else
+          cout << "Cannot pop from empty queue." << endl;
 }
