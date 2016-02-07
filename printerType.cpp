@@ -39,6 +39,10 @@ void printerType::setPagesToPrint(int p){
        pagesToPrint = p;
 }
 
+void printerType::setPrintRate(int p){
+       printRate = p;
+}
+
 int printerType::getRemainingPagesToPrint() const{
        return pagesToPrint;
 }
@@ -53,11 +57,11 @@ void printerType::setCurrentPrintJob(printRequestType printJob){
 }
 
 int printerType::getCurrentPrintJobNumber() const{
-       return currentPrintJob.getJobNumber();
+       return currentPrintJob.getRequestNumber();
 }
 
 int printerType::getCurrentPrintJobPages() const{
-       return currentPrintJob.getPages();
+       return currentPrintJob.getNumberOfPages();
 }
 
 

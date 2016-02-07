@@ -5,6 +5,9 @@
 #include <fstream>
 #include <string>
 
+#include "printRequestType.h"
+#include "printerType.h"
+
 using namespace std;
 
 class printerListType{
@@ -26,12 +29,16 @@ class printerListType{
             //else -1 is returned
             int getFreePrinterID() const;
 
+            //Function to return the number of busy printers
+            //Postcondition: the number of busy printers is returned
+            int getNumberOfBusyPrinters() const;
+            
             //Function to set a printer as busy
             //Postcondition: The specified printer is found by the printerID
             //and set to "busy", currentPrintJob = printJob, 
             //pagesToPrint = pages
             void setPrinterBusy(int printerID, printRequestType printJob,
-                                int pagesi, int clock, ostream& outfile);
+                                int pages,int printRate, int clock,ostream & outfile);
 
             //Function to update the status of each printer
             //Postcondition: the pagesToPrint is decremented by the printRate

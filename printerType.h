@@ -5,6 +5,8 @@
 #include <fstream>
 #include <string>
 
+#include "printRequestType.h"
+
 using namespace std; 
 
 class printerType{
@@ -39,6 +41,9 @@ class printerType{
             //number of pages from the print job
             //Postcondition: pagesToPrint = printJob.pages
             void setPagesToPrint(int p);
+            
+            //Function to set the print rate for the printer
+            void setPrintRate(int p);
 
             //Function to return how many pages are left to print
             //Postcondition: pagesToPrint is returned
