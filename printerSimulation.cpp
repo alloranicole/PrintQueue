@@ -19,7 +19,7 @@ using namespace std;
 void setSimulationParameters(int& maxPages, int& printRate, int& numOfPrinters,
                          int& numOfPrintJobs, unsigned int& seed, string& file);
 //Function to return the random size of the print job
-int printJobArrival();
+int printJobArrival(int maxPages);
 
 //Function to run the printer simulation
 void runSimulation();
@@ -29,6 +29,12 @@ int main()
     runSimulation();
     
     return 0;
+}
+
+int printJobArrival(int maxPages){
+    int pages;
+    pages = rand() % maxPages + 1;
+    return pages;
 }
 
 void setSimulationParameters(int& maxPages, int& printRate, int& numOfPrinters                           int& numOfPrintJobs, unsigned int& seed, string& file)
@@ -84,9 +90,12 @@ void runSimulation(){
      unsigned int seed;
      string file;
      bool notFinished = true;
-     
+     int requestNumber = 1, printerID;
+
      setSimulationParameters(maxPages, printRate, numOfPrinters, numOfPrintJobs, seed, file);
-     
+
+     printRequestType printJob;
+     waitingQueue pWaitingQueue;
      int printJobs = numOfPrintJobs; 
      printerListType printers(numOfPrinters);
 
@@ -94,18 +103,29 @@ void runSimulation(){
          //Update the printers in use by decrementing the pages to print 
          //by the print rate
          updatePrinters(clock, file);
-         //Get the number of pages of the print job and then set its priority
+         //Get the number of pages of the print job if print jobs available
          if(printJobs > 0){
-            pageNum= printJobArrival();
+            pageNum= printJobArrival(maxPages);
+            printJob.setPrintRequestType(pageNum,requestNumber);
             printJobs--;
-            if(pageNum <= 10)
-               priority = 1;
-            else if(pageNum > 10 && pageNum <= 20)
-                   priority = 2;
-            else
-                priority = 3;
+            requestNumber++;
            }
-  
+
+         printerID = printers.getFreePrinterID();
+         while(printerID != -1 && !pWaitingQueue.queueEmpty()){
+               printJob = pWaitingQueue.queueFront();
+               printers.setPrinterBusy(printerID,printJob,
+                                      printJob.getNumberOfPages(),clock,file);
+               pWaitingQueue.queuePop();
+               printerID = printers.getFreePrinterID();
+         }
+                       
+         //ADD getNumberOfBusyPrinters() FUNCTION TO .h FILE
+         //ALSO THERE IS AN EXTRA I in one of the .h files parameters
+         //Also make sure classes are good to go
+         if(printJobs <= 0 && printers.getNumberOfBusyPrinters() == 0 &&
+            pWaitingQueue.queueSize() == 0)
+             notFinished = false;
   
          clock++;
       }
