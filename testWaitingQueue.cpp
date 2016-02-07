@@ -36,13 +36,11 @@ int main()
      testWaiting.add(testFour);
 
      cout << "The queue's size is: " << testWaiting.queueSize() << endl;
+     unsigned int size = testWaiting.queueSize();
      cout << "This is the order they print out:" << endl;
-     for(int i = 0; i < testWaiting.queueSize(); i++)
+     for(int i = 0; i < size; i++)
      {
-          cout << "Front: ";
           testWaiting.queueFront().print();
-          cout << "Back: ";
-          testWaiting.queueBack().print();
           testWaiting.queuePop();
      }
 }
