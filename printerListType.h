@@ -1,6 +1,7 @@
 /* Group 1
  * Taylor AB and Geoffrey P
  * Header file of the printerListType class
+ * The class that creates and maintains the list of printers available to print
  */
 #include <fstream>
 #include <string>

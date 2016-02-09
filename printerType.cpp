@@ -1,6 +1,8 @@
 /* Group 1
  * Taylor AB and Geoffrey P
  * Implementation file of the printerType class
+ * The class that defines what variables and methods a printer has available to
+ * it
  */
 
 #include <iostream>

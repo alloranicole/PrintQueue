@@ -1,6 +1,8 @@
 /* Group 1
  * Taylor AB and Geoffrey P
  * File to run the Print Simulation
+ * A given number of printers complete a given number of print jobs in a 
+ * certain order. The simulation returns how long it takes to do such.
  */
 #include<fstream>
 #include<cstdlib>
@@ -172,7 +174,7 @@ void runSimulation(){
             outfile << "Maximum number of pages-: " << maxPages << endl;
             outfile << "Rate of printing--------: " << printRate << endl;
             outfile << "Number of printers------: " << numOfPrinters << endl;
-            outfile << "Number of print jobes---: " << numOfPrintJobs << endl;
+            outfile << "Number of print jobs---: " << numOfPrintJobs << endl;
             if(seed == 0)
                  outfile << "You did not provide a seed." << endl;
             else
@@ -184,7 +186,7 @@ void runSimulation(){
             cout << "Maximum number of pages-: " << maxPages << endl;
             cout << "Rate of printing--------: " << printRate << endl;
             cout << "Number of printers------: " << numOfPrinters << endl;
-            cout << "Number of print jobes---: " << numOfPrintJobs << endl;
+            cout << "Number of print jobs---: " << numOfPrintJobs << endl;
             if(seed == 0)
                  cout << "You did not provide a seed." << endl;
             else
@@ -195,7 +197,7 @@ void runSimulation(){
       if(checkFile == 1)
       {
             outfile << "---Results of the simulation------------" << endl;
-            outfile << "Time Elapsed------------: " << clock << endl;
+            outfile << "Time Elapsed------------: " << clock - 1 << endl;
       }
       else     
       {

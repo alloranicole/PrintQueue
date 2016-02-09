@@ -1,6 +1,8 @@
 /* Group 1
  * Taylor AB and Geoffrey P
  * printerType Header File
+ * The class that defines what variables and methods a printer has available to
+ * it
  */
 #include <fstream>
 #include <string>
