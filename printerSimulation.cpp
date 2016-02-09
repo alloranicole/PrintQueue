@@ -40,7 +40,7 @@ int printJobArrival(int maxPages){
     return pages;
 }
 
-void setSimulationParameters(int& maxPages, int& printRate, int& numOfPrinters,                           int& numOfPrintJobs, unsigned int& seed, int& checkFile)
+void setSimulationParameters(int& maxPages, int& printRate, int& numOfPrinters, int& numOfPrintJobs, unsigned int& seed, int& checkFile)
 {
      char check; 
 
@@ -69,9 +69,10 @@ void setSimulationParameters(int& maxPages, int& printRate, int& numOfPrinters, 
        cin >> seed;
        cout << endl; 
        srand(seed);
-     }else 
+     }else{
+       seed = 0; 
        srand(time(0));
-     
+     }
      cout << "Want simulation info sent to file? [Y/N]: ";
      cin >> check;
      cout << endl; 
@@ -95,7 +96,7 @@ void runSimulation(){
      int checkFile;//trackes if filename was given
    
      //Gets initial values from user
-    setSimulationParameters(maxPages, printRate, numOfPrinters, numOfPrintJobs, seed, checkFile);
+     setSimulationParameters(maxPages, printRate, numOfPrinters, numOfPrintJobs, seed, checkFile);
      //Decides if the user wants to enter a file name 
      //then opens said file
      if(checkFile == 1){
@@ -162,6 +163,44 @@ void runSimulation(){
              notFinished = false;
   
          clock++;//update the clock time 
+      }
+
+      //remind the user what they gave at the beginning
+      if(checkFile == 1)
+      {
+            outfile << "---You gave the following information---" << endl;
+            outfile << "Maximum number of pages-: " << maxPages << endl;
+            outfile << "Rate of printing--------: " << printRate << endl;
+            outfile << "Number of printers------: " << numOfPrinters << endl;
+            outfile << "Number of print jobes---: " << numOfPrintJobs << endl;
+            if(seed == 0)
+                 outfile << "You did not provide a seed." << endl;
+            else
+                 outfile << "Seed value--------------: " << seed << endl;
+      }
+      else
+      {
+            cout << "---You gave the following information---" << endl;
+            cout << "Maximum number of pages-: " << maxPages << endl;
+            cout << "Rate of printing--------: " << printRate << endl;
+            cout << "Number of printers------: " << numOfPrinters << endl;
+            cout << "Number of print jobes---: " << numOfPrintJobs << endl;
+            if(seed == 0)
+                 cout << "You did not provide a seed." << endl;
+            else
+                 cout << "Seed value--------------: " << seed << endl;
+      }
+
+      //display results
+      if(checkFile == 1)
+      {
+            outfile << "---Results of the simulation------------" << endl;
+            outfile << "Time Elapsed------------: " << clock << endl;
+      }
+      else     
+      {
+            cout << "---Results of the simulation------------" << endl;
+            cout << "Time Elapsed------------: " << clock << endl;
       }
       //If a filename was given make sure to close it
       if(checkFile==1)
