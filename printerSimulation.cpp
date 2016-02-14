@@ -24,6 +24,8 @@ void setSimulationParameters(int& maxPages, int& printRate, int& numOfPrinters,
 //Postcondition: number of pages of a print job is returned
 int printJobArrival(int maxPages);
 
+void printResults(int& maxPages, int& printRate, int& numOfPrinters, int& numOfPrintJobs, unsigned int& seed, ostream& outfile);
+
 //Function to run the printer simulation
 //Postcondition: simulation is run calculating the results which are then displayed
 void runSimulation();
@@ -85,6 +87,24 @@ void setSimulationParameters(int& maxPages, int& printRate, int& numOfPrinters, 
      }else 
        checkFile = 0;
 
+}
+
+void printResults(int& maxPages, int& printRate, int& numOfPrinters, int& numOfPrintJobs, unsigned int& seed, int clock, ostream& outfile)
+{
+     //remind the user what they gave at the beginning
+     outfile << "---You gave the following information---" << endl;
+     outfile << "Number of print jobs---: " << numOfPrintJobs << endl;
+     outfile << "Maximum number of pages-: " << maxPages << endl;
+     outfile << "Rate of printing--------: " << printRate << endl;
+     outfile << "Number of printers------: " << numOfPrinters << endl;
+     if(seed == 0)
+           outfile << "You did not provide a seed." << endl;
+     else
+           outfile << "Seed value--------------: " << seed << endl;
+
+      //display results
+      outfile << "---Results of the simulation------------" << endl;
+      outfile << "Time Elapsed------------: " << clock - 1 << endl;
 }
 
 void runSimulation(){
@@ -159,43 +179,9 @@ void runSimulation(){
   
          clock++;//update the clock time 
       }
-      //remind the user what they gave at the beginning
-      if(checkFile == 1)
-      {
-            outfile << "---You gave the following information---" << endl;
-            outfile << "Maximum number of pages-: " << maxPages << endl;
-            outfile << "Rate of printing--------: " << printRate << endl;
-            outfile << "Number of printers------: " << numOfPrinters << endl;
-            outfile << "Number of print jobs---: " << numOfPrintJobs << endl;
-            if(seed == 0)
-                 outfile << "You did not provide a seed." << endl;
-            else
-                 outfile << "Seed value--------------: " << seed << endl;
-      }
-      else
-      {
-            cout << "---You gave the following information---" << endl;
-            cout << "Maximum number of pages-: " << maxPages << endl;
-            cout << "Rate of printing--------: " << printRate << endl;
-            cout << "Number of printers------: " << numOfPrinters << endl;
-            cout << "Number of print jobs---: " << numOfPrintJobs << endl;
-            if(seed == 0)
-                 cout << "You did not provide a seed." << endl;
-            else
-                 cout << "Seed value--------------: " << seed << endl;
-      }
+      
+      printResults(maxPages, printRate, numOfPrinters, numOfPrintJobs, seed, clock, *out);
 
-      //display results
-      if(checkFile == 1)
-      {
-            outfile << "---Results of the simulation------------" << endl;
-            outfile << "Time Elapsed------------: " << clock - 1 << endl;
-      }
-      else     
-      {
-            cout << "---Results of the simulation------------" << endl;
-            cout << "Time Elapsed------------: " << clock - 1 << endl;
-      }
       //If a filename was given make sure to close it
       if(checkFile==1)
         outfile.close();

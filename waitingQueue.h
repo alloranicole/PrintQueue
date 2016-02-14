@@ -18,7 +18,7 @@
 
 using namespace std; 
 
-class waitingQueue: public queue<printRequestType>
+class waitingQueue
 {
      public:
           void add(printRequestType pushMe);
