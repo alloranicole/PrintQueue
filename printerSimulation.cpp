@@ -92,10 +92,10 @@ void runSimulation(){
      //Variables
      int maxPages,printRate,numOfPrinters,numOfPrintJobs,clock = 1,pageNum;
      unsigned int seed;
-     bool notFinished = true;//Tracks if the loop is finished
      int requestNumber = 1, printerID;
-     ofstream outfile;//output file 
-     int checkFile;//trackes if filename was given
+     ofstream outfile;//output file
+     int checkFile;//tracks if filename was given
+     ostream* out = &cout;//Prints to specified location 
    
      //Gets initial values from user
      setSimulationParameters(maxPages, printRate, numOfPrinters, numOfPrintJobs, seed, checkFile);
@@ -115,22 +115,22 @@ void runSimulation(){
           cout << endl;
           outfile.open(file);
        }
-     }
+       out = &outfile;//changes which location is sent to functions
+     } 
      
      printRequestType printJob;
      waitingQueue pWaitingQueue;
      int printJobs = numOfPrintJobs;//holds total number of print jobs
      //sets up list of # printers 
      printerListType printers(numOfPrinters);
-
-     while(notFinished){
+     //after each run through of the loop check to see if all the 
+     //print jobs have been completed, thus the simulation is finished
+     //if no more print jobs AND no busy printers AND no jobs in the queue
+     while(printJobs > 0 || printers.getNumberOfBusyPrinters() != 0 ||
+           pWaitingQueue.queueSize() != 0){
          //Update the printers in use by decrementing the pages to print 
          //by the print rate
-         //If a filename was given there is a different function call
-         if(checkFile == 1)
-            printers.updatePrinters(clock,outfile);
-         else
-            printers.updatePrinters(clock,cout);
+         printers.updatePrinters(clock,*out);
             
          //Get the number of pages of the print job if print jobs available
          if(printJobs > 0){
@@ -148,11 +148,7 @@ void runSimulation(){
          while(printerID != -1 && !pWaitingQueue.queueEmpty()){
                printJob = pWaitingQueue.queueFront();//get print job in front
                //move print job to printer
-               //If a filename was given there is a different function call
-               if(checkFile == 1)
-                  printers.setPrinterBusy(printerID,printJob,printJob.getNumberOfPages(),printRate,clock, outfile);
-               else
-                  printers.setPrinterBusy(printerID,printJob,printJob.getNumberOfPages(),printRate,clock, cout);
+                  printers.setPrinterBusy(printerID,printJob,printJob.getNumberOfPages(),printRate,clock, *out);
                pWaitingQueue.queuePop();
                printerID = printers.getFreePrinterID();//check for free printer
          }
@@ -160,13 +156,9 @@ void runSimulation(){
          //after each run through of the loop check to see if all the 
          //print jobs have been completed, thus the simulation is finished
          //if no more print jobs AND no busy printers AND no jobs in the queue
-         if(printJobs <= 0 && printers.getNumberOfBusyPrinters() == 0 &&
-            pWaitingQueue.queueSize() == 0)
-             notFinished = false;
   
          clock++;//update the clock time 
       }
-
       //remind the user what they gave at the beginning
       if(checkFile == 1)
       {
@@ -202,7 +194,7 @@ void runSimulation(){
       else     
       {
             cout << "---Results of the simulation------------" << endl;
-            cout << "Time Elapsed------------: " << clock << endl;
+            cout << "Time Elapsed------------: " << clock - 1 << endl;
       }
       //If a filename was given make sure to close it
       if(checkFile==1)
