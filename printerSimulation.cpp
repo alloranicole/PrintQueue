@@ -18,8 +18,7 @@ using namespace std;
 
 //Function to print to the screen and ask for all of the simulation parameters
 //Postcondition: simulation parameters have value given by user
-void setSimulationParameters(int& maxPages, int& printRate, int& numOfPrinters,
-                         int& numOfPrintJobs, unsigned int& seed, int& checkFile);
+void setSimulationParameters(int& maxPages, int*& printRate, double*& cost, int& numOfPrinters, int& numOfPrintJobs, unsigned int& seed, int& checkFile, int& maintenanceLimit, int& maintanenceTime, double& failureProb, int& failureTime);
 //Function to return the random size of the print job
 //Postcondition: number of pages of a print job is returned
 int printJobArrival(int maxPages);
@@ -44,7 +43,7 @@ int printJobArrival(int maxPages){
     return pages;
 }
 
-void setSimulationParameters(int& maxPages, int& printRate, int& numOfPrinters, int& numOfPrintJobs, unsigned int& seed, int& checkFile)
+void setSimulationParameters(int& maxPages, int*& printRate, double*& cost, int& numOfPrinters, int& numOfPrintJobs, unsigned int& seed, int& checkFile, int& maintenanceLimit, int& maintanenceTime, double& failureProb, int& failureTime)
 {
      char check; 
 
@@ -56,14 +55,68 @@ void setSimulationParameters(int& maxPages, int& printRate, int& numOfPrinters, 
      cin >> maxPages;
      cout << endl;
 
-     cout << "Enter the printing rate: ";
-     cin >> printRate;
-     cout << endl; 
-
      cout << "Enter the number of printers: ";
      cin >> numOfPrinters;
      cout << endl; 
 
+     printRate = new int[numOfPrinters];
+     cost = new double[numOfPrinters];
+      
+     cout << "Want separate printing rates for the " << numOfPrinters << 
+             " printers? [Y/N]: ";
+     cin >> check;
+     cout << endl; 
+
+     if(check == 'Y' || check == 'y'){
+        for(int i = 0; i < numOfPrinters; i++){
+            cout << "Enter the rate for printer " << (i+1) << " : ";       
+            cin >> printRate[i];
+            cout << endl; 
+          }  
+     }else{
+        cout << "Enter the rate for printers: ";
+        cin >> printRate[0];
+        cout << endl;       
+        for(int i = 1; i < numOfPrinters; i++){
+            printRate[i] = printRate[0];
+        }
+     }       
+     cout << "Enter the cutoff for maintenance: ";
+     cin >> maintenanceLimit;
+     cout << endl; 
+   
+     cout << "Enter the time for maintanence: ";
+     cin >> maintanenceTime;
+     cout << endl; 
+
+     cout << "Enter the probability for failure: ";
+     cin >> failureProb;
+     cout << endl; 
+    
+     cout << "Enter the time to fix failure: ";
+     cin >> failureTime;
+     cout << endl; 
+     
+     cout << "Want a separate cost per page for the " << numOfPrinters << 
+             " printers? [Y/N]: ";
+     cin >> check;
+     cout << endl; 
+
+     if(check == 'Y' || check == 'y'){
+        for(int i = 0; i < numOfPrinters; i++){
+            cout << "Enter the cost per page for printer " << (i+1) << " : ";       
+            cin >> cost[i];
+            cout << endl; 
+          }  
+     }else{
+        cout << "Enter the cost per page for printers: ";
+        cin >> cost[0];
+        cout << endl;       
+        for(int i = 1; i < numOfPrinters; i++){
+            cost[i] = cost[0];
+        }
+     }
+       
      cout << "Want to enter a seed value? [Y/N]: ";
      cin >> check;
      cout << endl; 
@@ -110,7 +163,11 @@ void printResults(int& maxPages, int& printRate, int& numOfPrinters, int& numOfP
 void runSimulation(){
 
      //Variables
-     int maxPages,printRate,numOfPrinters,numOfPrintJobs,clock = 1,pageNum;
+     int maxPages,numOfPrinters,numOfPrintJobs,clock = 1,pageNum;
+     int maintenanceLimit, maintenanceTime, failureTime;
+     double failureProb;
+     int *printRate;
+     double *cost;
      unsigned int seed;
      int requestNumber = 1, printerID;
      ofstream outfile;//output file
@@ -118,7 +175,7 @@ void runSimulation(){
      ostream* out = &cout;//Prints to specified location 
    
      //Gets initial values from user
-     setSimulationParameters(maxPages, printRate, numOfPrinters, numOfPrintJobs, seed, checkFile);
+     setSimulationParameters(maxPages, printRate, cost, numOfPrinters, numOfPrintJobs, seed, checkFile, maintenanceLimit, maintenanceTime, failureProb, failureTime);
      //Decides if the user wants to enter a file name 
      //then opens said file
      if(checkFile == 1){
@@ -138,11 +195,12 @@ void runSimulation(){
        out = &outfile;//changes which location is sent to functions
      } 
      
+     
      printRequestType printJob;
      waitingQueue pWaitingQueue;
      int printJobs = numOfPrintJobs;//holds total number of print jobs
      //sets up list of # printers 
-     printerListType printers(numOfPrinters);
+     printerListType printers(numOfPrinters, printRate, cost, maintenanceLimit, maintenanceTime, failureProb, failureTime);
      //after each run through of the loop check to see if all the 
      //print jobs have been completed, thus the simulation is finished
      //if no more print jobs AND no busy printers AND no jobs in the queue
@@ -168,7 +226,7 @@ void runSimulation(){
          while(printerID != -1 && !pWaitingQueue.queueEmpty()){
                printJob = pWaitingQueue.queueFront();//get print job in front
                //move print job to printer
-                  printers.setPrinterBusy(printerID,printJob,printJob.getNumberOfPages(),printRate,clock, *out);
+                  printers.setPrinterBusy(printerID,printJob,printJob.getNumberOfPages(),clock, *out);
                pWaitingQueue.queuePop();
                printerID = printers.getFreePrinterID();//check for free printer
          }
@@ -180,8 +238,7 @@ void runSimulation(){
          clock++;//update the clock time 
       }
       
-      printResults(maxPages, printRate, numOfPrinters, numOfPrintJobs, seed, clock, *out);
-
+     // printResults(maxPages, printRate, numOfPrinters, numOfPrintJobs, seed, clock, *out);
       //If a filename was given make sure to close it
       if(checkFile==1)
         outfile.close();

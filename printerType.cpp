@@ -16,17 +16,52 @@ using namespace std;
 
 printerType::printerType(){
        status = "free";
+       maintenanceStatus = "isWorking";
+       failureStatus = "printing";
+       maintenanceLimit = 0;
+       mLValue = 0;
+       maintenanceTime = 0;
+       mTValue = 0;
+       failureProb = 0;
+       failureTime = 0;
+       fTValue = 0;
+       cost = 0;
        pagesToPrint = 0;
        printRate = 0; 
        totalTime = 0;
+       totalCost = 0;
 }
 
 bool printerType::isFree() const{
        return (status == "free");
 }
 
+bool printerType::isInMaintenance() const{
+       return (maintenanceStatus == "inMaintenance");
+}
+
+bool printerType::isOffline() const{
+       return (failureStatus == "offline");
+}
+
 void printerType::setBusy(){
        status = "busy";
+}
+
+void printerType::setInMaintenance(){
+       maintenanceStatus = "inMaintenance";
+}
+
+void printerType::setOffline(){
+       failureStatus = "offline";
+}
+
+void printerType::setPrinting(){
+       failureStatus = "printing";
+}
+
+void printerType::setIsWorking(){
+       maintenanceStatus = "isWorking";
 }
 
 int printerType::getTotalTime(){
@@ -45,13 +80,87 @@ void printerType::setPrintRate(int p){
        printRate = p;
 }
 
+void printerType::setMaintenanceLimit(int m){
+       maintenanceLimit = m;
+       mLValue = m;
+}
+
+void printerType::setMaintenanceTime(int f){
+       maintenanceTime = f;
+       mTValue = f;
+}
+
+void printerType::setCost(double c){
+       cost = c;
+}
+
+void printerType::setFailureProb(double f){
+       failureProb = f;
+}
+
+void printerType::setFailureTime(int f){
+       failureTime = f;
+       fTValue = f;
+}
+
 int printerType::getRemainingPagesToPrint() const{
        return pagesToPrint;
 }
 
-void printerType::decreasePagesToPrint(){
+double printerType::getTotalCost(){
+       return totalCost;
+}
+
+//May have to move to the printerListType because
+//will not be able to get the printer ID
+//Or.... I could send the printer ID to this function
+//(ostream& outfile, int ID, int clock)
+void printerType::checkForMaintenance(ostream& outfile, int ID, int clock){
+       if(maintenanceLimit <= 0 && !isInMaintenance()){
+          setInMaintenance();
+          outfile << "Printer " << ID << " is currently in maintanence at time "
+                  << clock << endl;
+       }else if(maintenanceTime > 0 && isInMaintenance())
+               maintenanceTime--;
+        else if(maintenanceTime==0){
+               maintenanceTime = mTValue;
+               maintenanceLimit = mLValue;
+               setIsWorking();
+               outfile << "Printer " << ID << " is out of maintanence at time "
+                       << clock << endl;
+       }
+}
+
+void printerType::checkForFailure(ostream& outfile, int ID, int clock){
+       if(!isOffline()){
+          double check;
+          check = ((double) rand() / (RAND_MAX));
+	  if(check <= failureProb){ 
+             setOffline();
+             outfile << "Printer " << ID << " failed printing and is offline at time "
+                     << clock << endl;
+          }   
+       }else if(failureTime > 0 && isOffline())
+                failureTime--;
+        if(failureTime == 0){
+           failureTime = fTValue;
+           setPrinting();
+           outfile << "Printer " << ID << " is no longer offline at time "
+                        << clock << endl;
+       }
+}
+
+void printerType::updateTotalCost(){
+       totalCost += (cost * pagesToPrint);
+}
+               
+void printerType::decreasePagesToPrint(ostream& outfile,int ID, int clock){
+       checkForFailure(outfile, ID, clock);
+       if(!isOffline()){      
        pagesToPrint -= printRate;
+       maintenanceLimit -= printRate;
        totalTime++;
+       }
 }
 
 void printerType::setCurrentPrintJob(printRequestType printJob){

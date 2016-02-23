@@ -15,11 +15,16 @@ class printerListType{
       
 
       public:
-            //Constructor to initialize the list of printers
+            //Constructor to initialize the list of printers 
             //Postcondition: numOfPrinters = num and a list of printers
             //is created the size of num and thus all of those printers
             //are initialized with the status "free" 
-            printerListType(int num = 1);
+            //The values in printRate[] are assigned to the corresponding printer
+            //The values in cost[] are assigned to the corresponding printer
+            //The maintenanceLimit and fixTime is set for all printers
+            printerListType(int num, int *printRate, double *cost, 
+                            int maintenanceLimit, int maintenanceTime, 
+                            double failureProb, int failureTime);
 
             //Destructor
             //Postcondition: the list of printers is destroyed
@@ -39,7 +44,7 @@ class printerListType{
             //and set to "busy", currentPrintJob = printJob, 
             //pagesToPrint = pages
             void setPrinterBusy(int printerID, printRequestType printJob,
-                                int pages,int printRate, int clock,ostream & outfile);
+                                int pages,int clock,ostream & outfile);
 
             //Function to update the status of each printer
             //Postcondition: the pagesToPrint is decremented by the printRate
