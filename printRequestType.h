@@ -13,22 +13,24 @@
 class printRequestType
 {
      public:
-          void setPrintRequestType(int numPage, int numReq);
-          //Initializes an instance of this class and uses the parameters given.
-          //Postcondition:
-               //NumberOfPages = numPage;
-               //Priority =
-                    //1 if numPage <= 10
-                    //2 if 10 < numPage <= 20
-                    //3 if 20 < numPage
-               //RequestNumber = numReq;
-
-          printRequestType();
-          //Default constructor. Calls setPrintRequestType with all 0.
+          void setPrintRequestType(int priorCut[], int numPrior, int maxPage, int numPage, int numReq);
+          //Sets the values of the private variables.
           //Post condition:
-               //NumberOfPages = 0;
-               //Priority = 1;
-               //RequestNumber = 0;
+               //NumberOfPages = numPage
+               //RequestNumber = numReq
+               //Priority =
+                    //1. Initilize list of cutoffs
+                    //2. Add maximum number of pages to the end (represents final cutoff)
+                    //3. Compare number of pages to cutoffs until a cutoff is greater or equal
+                    //4. Assign Priority the value of the position in the array that the cutoff was found
+
+          printRequestType(int priorCut[], int numPrior, int maxPage, int numPage, int numReq);
+          //Default constructor with values.
+          //Post condition: see setPrintRequestType
+          
+          printRequestType();
+          //Default constructor without values.
+          //Post condition: all variables are zero.
 
           int getNumberOfPages() const;
           //returns the value of the private variable NumberOfPages.
@@ -49,9 +51,9 @@ class printRequestType
                //are printed out to the screen.
 
      private:
-          int NumberOfPages;
-          int Priority;
-          int RequestNumber;
+          int NumberOfPages; //how many pages this job has
+          int Priority; //the importance of this job, smaller = more important
+          int RequestNumber; //when the job was made compared to other jobs
 };
 
 #endif

@@ -13,27 +13,63 @@
 
 using namespace std;
 
-void printRequestType::setPrintRequestType(int numPage, int numReq)
+void printRequestType::setPrintRequestType(int priorCut[], int numPrior, int maxPage, int numPage, int numReq)
 {
+     bool found = false;
+     int priorityCutoffs[numPrior];
+     int k = 0;
+     for(int i = 0; i < numPrior - 1; i++)
+          priorityCutoffs[i] = priorCut[i];
+     priorityCutoffs[numPrior - 1] = maxPage;
+     if(numPage > maxPage)//quick test incase bad info is recieved
+     {
+          cout << "Warning: Print Request #" << numReq << " has more pages than allowed." << endl;
+          Priority = numPrior;
+     }
+     while(found == false)
+     {
+          if(numPage <= priorityCutoffs[k])
+          {
+               found = true;
+               Priority = k + 1;
+          }
+          k++;
+     }     
      NumberOfPages = numPage;
-     if(numPage <= 10)
+     RequestNumber = numReq;
+}
+
+printRequestType::printRequestType(int priorCut[], int numPrior, int maxPage, int numPage, int numReq)
+{
+     bool found = false;
+     int priorityCutoffs[numPrior];
+     int k = 0;
+     for(int i = 0; i < numPrior - 1; i++)
+          priorityCutoffs[i] = priorCut[i];
+     priorityCutoffs[numPrior - 1] = maxPage;
+     if(numPage > maxPage)//quick test incase bad info is recieved
      {
-          Priority = 1;
-     }
-     else if(numPage <= 20)
+          cout << "Warning: Print Request #" << numReq << " has more pages than allowed." << endl;
+          Priority = numPrior;
+     } 
+     while(found == false)
      {
-          Priority = 2;
-     }
-     else
-     {
-          Priority = 3;
-     }
+          if(numPage <= priorityCutoffs[k])
+          {
+               found = true;
+               Priority = k + 1;
+          }
+          k++;
+     }     
+     NumberOfPages = numPage;
      RequestNumber = numReq;
 }
 
 printRequestType::printRequestType()
 {
-     setPrintRequestType(0,0);
+     NumberOfPages = 0;
+     Priority = 0;
+     RequestNumber = 0;
 }
 
 int printRequestType::getNumberOfPages() const
