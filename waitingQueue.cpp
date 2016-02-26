@@ -16,84 +16,97 @@
 #include "waitingQueue.h"
 #include "printRequestType.h"
 
-using namespace std; 
+using namespace std;
 
-void waitingQueue::add(printRequestType pushMe)
+waitingQueue::waitingQueue(int numQueues)
 {
-     if(pushMe.getPriority() == 1)
-          priorityOne.push(pushMe);
-     else if(pushMe.getPriority() == 2)
-          priorityTwo.push(pushMe);
-     else
-          priorityThree.push(pushMe);
+     NumberOfPriorities = numQueues;
+     list = new queue<printRequestType>[numQueues];
 }
 
-bool waitingQueue::queueEmpty()
+waitingQueue::waitingQueue()
 {
-     if(priorityOne.empty())
-     {
-          if(priorityTwo.empty())
-          {
-               if(priorityThree.empty())
-               {
-                    return true;
-               }
-               else
-               {
-                    return false;
-               }
-          }
-          else
-          {
-               return false;
-          }
-     }
-     else
-     {
-          return false;
-     }
+     NumberOfPriorities = 1;
+     list = new queue<printRequestType>[1];
 }
 
-unsigned int waitingQueue::queueSize()
+void waitingQueue::push(printRequestType pushMe)
 {
-     unsigned int size = priorityOne.size();
-     size += priorityTwo.size();
-     size += priorityThree.size();
+     list[pushMe.getPriority()-1].push(pushMe);
+}
+
+bool waitingQueue::empty()
+{
+     bool empty = true;
+     for(int i = 0; i < NumberOfPriorities; i++)
+     {
+          if(list[i].empty() == false)
+               empty = false;
+     }
+     return empty;
+}
+
+unsigned int waitingQueue::size()
+{
+     unsigned int size = 0;
+     for(int i = 0; i < NumberOfPriorities; i++)
+     {
+          size = size + list[i].size();
+     }
      return size;
 }
 
-printRequestType waitingQueue::queueFront()
+printRequestType waitingQueue::front()
 {
-     if(!priorityOne.empty())
-          return priorityOne.front();
-     else if(!priorityTwo.empty())
-          return priorityTwo.front();
-     else if(!priorityThree.empty())
-          return priorityThree.front();
-     else
-          cout << "There is no front of an emptry queue." << endl;
+     bool found = false;
+     int i = 0;
+     printRequestType front;
+     while(found == false && i < NumberOfPriorities)
+     {
+          if(list[i].empty() == false)
+          {
+               found = true;
+               front = list[i].front();
+          }
+          i++;
+     }
+     if(found == false)
+          cout << "There is no front element in an empty queue." << endl;
+     return front;
 }
 
-printRequestType waitingQueue::queueBack()
+printRequestType waitingQueue::back()
 {
-     if(!priorityThree.empty())
-          return priorityThree.back();
-     else if(!priorityTwo.empty())
-          return priorityTwo.back();
-     else if(!priorityOne.empty())
-          return priorityOne.back();
-     else
-          cout << "There is no back of an empty queue." << endl;
+     bool found = false;
+     int i = NumberOfPriorities - 1;
+     printRequestType back;
+     while(found == false && i >= 0)
+     {
+          if(list[i].empty() == false)
+          {
+               found = true;
+               back = list[i].back();
+          }
+          i--;
+     }
+     if(found == false)
+          cout << "There is no back element in an empty queue." << endl;
+     return back;
 }
 
-void waitingQueue::queuePop()
+void waitingQueue::pop()
 {
-     if(!priorityOne.empty())
-          priorityOne.pop();
-     else if(!priorityTwo.empty())
-          priorityTwo.pop();
-     else if(!priorityThree.empty())
-          priorityThree.pop();
-     else
-          cout << "Cannot pop from empty queue." << endl;
+     bool found = false;
+     int i = 0;
+     while(found == false && i < NumberOfPriorities)
+     {
+          if(list[i].empty() == false)
+          {
+               found = true;
+               list[i].pop();
+          }
+          i++;
+     }
+     if(found == false)
+          cout << "There is no front element in an empty queue." << endl;
 }

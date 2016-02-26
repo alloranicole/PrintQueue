@@ -21,26 +21,36 @@ using namespace std;
 class waitingQueue
 {
      public:
-          void add(printRequestType pushMe);
+          waitingQueue(int numQueues);
+          //Default constructor with input.
+          //Post condition:
+               //NumberOfPriorities = numQueues
+               //list is initialized to be an array with numQueues elements
+
+          waitingQueue();
+          //Default constructor without input.
+          //Post condition:
+               //NumberOfPriorities = 1
+               //list is initialized to be an array with 1 element
+
+          void push(printRequestType pushMe);
           //places pushMe in the queue representing
           //the same priority
           //Postcondition:
-               //pushMe is in priorityOne if priority = 1
-               //pushMe is in priorityTwo if priority = 2
-               //pushMe is in priorityThree if priority = 3
-          bool queueEmpty();
+               //pushMe is pushed onto the correct queue based on its priority
+          bool empty();
           //uses emptry() to test if all three queues are
           //emptry. if any queue has an item, false is returned
           //postcondition:
                //return true if all queues are emptry
                //return false if any queue has an item
 
-          unsigned int queueSize();
+          unsigned int size();
           //adds the size of the three queues using size()
           //postcondition:
-               //return the sum of the three queues' sizes
+               //return the sum of the queues' sizes
 
-          printRequestType queueFront();
+          printRequestType front();
           //searches the queues from first to last to find 
           //the first queue with an item. The front item of 
           //that queue is returned.
@@ -48,7 +58,7 @@ class waitingQueue
                //front of first non-empty queue is returned
                //message is given if queue was empty
 
-          printRequestType queueBack();
+          printRequestType back();
           //searches the queues from last to first to find 
           //the first queue with an item. The back item of 
           //that queue is returned.
@@ -56,7 +66,7 @@ class waitingQueue
                //back of first non-empty queue is returned
                //message is given if queue was empty
 
-          void queuePop();
+          void pop();
           //searches the queues from first to last to find 
           //the first queue with an item. The front item of 
           //that queue is popped.
@@ -65,7 +75,6 @@ class waitingQueue
                //message is given if queue was empty
 
      private:
-          queue<printRequestType> priorityOne;
-          queue<printRequestType> priorityTwo;
-          queue<printRequestType> priorityThree;
+          int NumberOfPriorities;
+          queue<printRequestType> *list;
 };
