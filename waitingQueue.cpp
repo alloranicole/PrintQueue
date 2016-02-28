@@ -30,8 +30,10 @@ waitingQueue::waitingQueue()
      list = new queue<printRequestType>[1];
 }
 
-void waitingQueue::push(printRequestType pushMe)
+void waitingQueue::push(printRequestType pushMe, int clock, ostream& out)
 {
+     out << "At time unit " << clock << " the following item entered the waiting queue:" << endl;
+     pushMe.print(out);
      list[pushMe.getPriority()-1].push(pushMe);
 }
 
@@ -94,8 +96,10 @@ printRequestType waitingQueue::back()
      return back;
 }
 
-void waitingQueue::pop()
+void waitingQueue::pop(int clock, ostream& out)
 {
+     out << "At time unit " << clock << " the following item exited the waiting queue:" << endl;
+     pushMe.print(out);
      bool found = false;
      int i = 0;
      while(found == false && i < NumberOfPriorities)

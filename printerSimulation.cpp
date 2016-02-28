@@ -18,13 +18,15 @@ using namespace std;
 
 //Function to print to the screen and ask for all of the simulation parameters
 //Postcondition: simulation parameters have value given by user
-void setSimulationParameters(int& maxPages, int*& printRate, double*& cost, int& numOfPrinters, int& numOfPrintJobs, unsigned int& seed, int& checkFile, int& maintenanceLimit, int& maintanenceTime, double& failureProb, int& failureTime);
+void setSimulationParameters(int& maxPages, int*& printRate, double*& cost, int& numOfPrinters, int& numOfPrintJobs, unsigned int& seed, int& checkFile, int& maintenanceLimit, int& maintanenceTime, double& failureProb, int& failureTime, int& numberOfPriorities, int*& priorityCutoffs);
 //Function to return the random size of the print job
 //Postcondition: number of pages of a print job is returned
 int printJobArrival(int maxPages);
 
 int printJobs(
 
+//Function designed to print out both the initial input and the results
+//uses ostream to output to whichever medium is sent, ex. cout or output file
 void printResults(int& maxPages, int& printRate, int& numOfPrinters, int& numOfPrintJobs, unsigned int& seed, ostream& outfile);
 
 //Function to run the printer simulation
@@ -80,41 +82,78 @@ int printJobArrival(int maxPages){
     return pages;
 }
 
-void setSimulationParameters(int& maxPages, int*& printRate, double*& cost, int& numOfPrinters, int& numOfPrintJobs, unsigned int& seed, int& checkFile, int& maintenanceLimit, int& maintanenceTime, double& failureProb, int& failureTime)
+void setSimulationParameters(int& maxPages, int*& printRate, double*& cost, int& numOfPrinters,
+int& numOfPrintJobs, unsigned int& seed, int& checkFile, int& maintenanceLimit, int& maintanenceTime,
+double& failureProb, int& failureTime, int& numberOfPriorities, int*& priorityCutoffs)
 {
      char check; 
-
-     cout << "Enter the total number of print jobs: ";
-     cin >> numOfPrintJobs;
+     
+     cout << "Use the default number of jobs? [y/n]: ";
+     cin >> check;
      cout << endl;
-    
-     cout << "Enter the max number of pages: ";
-     cin >> maxPages;
+     if(check == 'Y' || check == 'y')
+     {
+          numOfPrintJobs = 100;
+     }
+     else
+     {
+          cout << "Enter the total number of print jobs: ";
+          cin >> numOfPrintJobs;
+          cout << endl;
+     }
+     
+     cout << "Use the default maximum number of pages? [y/n]: ";
+     cin >> check;
      cout << endl;
+     if(check == 'Y' || check == 'y')
+     {
+          maxPages = 50;
+     }
+     else
+     {
+          cout << "Enter the maximum number of pages: ";
+          cin >> maxPages;
+          cout << endl;
+     }
 
-     cout << "Enter the number of printers: ";
-     cin >> numOfPrinters;
-     cout << endl; 
+     cout << "Use the default number of printers? [y/n]: ";
+     cin >> check;
+     cout << endl;
+     if(check == 'Y' || check == 'y')
+     {
+          numOfPrinters = 3;
+     }
+     else
+     {
+          cout << "Enter the number of printers: ";
+          cin >> numOfPrinters;
+          cout << endl;
+     }
 
      printRate = new int[numOfPrinters];
      cost = new double[numOfPrinters];
       
-     cout << "Want separate printing rates for the " << numOfPrinters << 
+     cout << "Separate printing rates for the " << numOfPrinters << 
              " printers? [Y/N]: ";
      cin >> check;
      cout << endl; 
 
-     if(check == 'Y' || check == 'y'){
-        for(int i = 0; i < numOfPrinters; i++){
+     if(check == 'Y' || check == 'y')
+     {
+        for(int i = 0; i < numOfPrinters; i++)
+        {
             cout << "Enter the rate for printer " << (i+1) << " : ";       
             cin >> printRate[i];
             cout << endl; 
-          }  
-     }else{
+        }  
+     }
+     else
+     {
         cout << "Enter the rate for printers: ";
         cin >> printRate[0];
         cout << endl;       
-        for(int i = 1; i < numOfPrinters; i++){
+        for(int i = 1; i < numOfPrinters; i++)
+        {
             printRate[i] = printRate[0];
         }
      }       
@@ -134,7 +173,7 @@ void setSimulationParameters(int& maxPages, int*& printRate, double*& cost, int&
      cin >> failureTime;
      cout << endl; 
      
-     cout << "Want a separate cost per page for the " << numOfPrinters << 
+     cout << "Separate cost per page for the " << numOfPrinters << 
              " printers? [Y/N]: ";
      cin >> check;
      cout << endl; 
@@ -153,6 +192,17 @@ void setSimulationParameters(int& maxPages, int*& printRate, double*& cost, int&
             cost[i] = cost[0];
         }
      }
+
+     cout << "Enter number of priority levels: ";
+     cin >> numberOfPriorities;
+     priorityCutoffs = new int[numberOfPriorities];
+     for(int i = 0; i < numberOfPriorities - 1; i++)
+     {    
+          cout << "Maximum page value of priority level " << i + 1 << ": ";
+          cin >> priorityCutoffs[i];
+     }
+     priorityCutoffs[numberOfPriorities-1] = maxPages;
+     cout << endl;
        
      cout << "Want to enter a seed value? [Y/N]: ";
      cin >> check;
@@ -173,7 +223,7 @@ void setSimulationParameters(int& maxPages, int*& printRate, double*& cost, int&
      //This variable is used in the runSimulation to check if a user gives a
      //filename
      if(check == 'Y' || check == 'y'){
-        checkFile = 1;
+       checkFile = 1;
      }else 
        checkFile = 0;
 
@@ -183,7 +233,7 @@ void printResults(int& maxPages, int& printRate, int& numOfPrinters, int& numOfP
 {
      //remind the user what they gave at the beginning
      outfile << "---You gave the following information---" << endl;
-     outfile << "Number of print jobs---: " << numOfPrintJobs << endl;
+     outfile << "Number of print jobs----: " << numOfPrintJobs << endl;
      outfile << "Maximum number of pages-: " << maxPages << endl;
      outfile << "Rate of printing--------: " << printRate << endl;
      outfile << "Number of printers------: " << numOfPrinters << endl;
@@ -202,6 +252,7 @@ void runSimulation(){
      //Variables
      int maxPages,numOfPrinters,numOfPrintJobs,clock = 1,pageNum;
      int maintenanceLimit, maintenanceTime, failureTime, printJobs;
+     int numberOfPriorities, *priorityCutoffs;
      double failureProb;
      int *printRate;
      double *cost;
@@ -212,7 +263,8 @@ void runSimulation(){
      ostream* out = &cout;//Prints to specified location 
       
      //Gets initial values from user
-     setSimulationParameters(maxPages, printRate, cost, numOfPrinters, numOfPrintJobs, seed, checkFile, maintenanceLimit, maintenanceTime, failureProb, failureTime);
+     setSimulationParameters(maxPages, printRate, cost, numOfPrinters, numOfPrintJobs, seed, 
+          checkFile, maintenanceLimit, maintenanceTime, failureProb, failureTime, numberOfPriorities, priorityCutoffs);
      //Decides if the user wants to enter a file name 
      //then opens said file
      if(checkFile == 1){
@@ -243,7 +295,7 @@ void runSimulation(){
      //print jobs have been completed, thus the simulation is finished
      //if no more print jobs AND no busy printers AND no jobs in the queue
      while(printJobs > 0 || printers.getNumberOfBusyPrinters() != 0 ||
-           pWaitingQueue.queueSize() != 0){
+         pWaitingQueue.size() != 0){
          //Update the printers in use by decrementing the pages to print 
          //by the print rate
          printers.updatePrinters(clock,*out);
@@ -255,9 +307,9 @@ void runSimulation(){
                for(int i = 1; i <= printJobs; i++){
                    pageNum= printJobArrival(maxPages);
                    //add print job to the queue
-                   printJob.setPrintRequestType(pageNum,requestNumber);
-                   pWaitingQueue.add(printJob);
-                   printJobs--;//decrement print jobs left
+                   printJob.setPrintRequestType(priorityCutoffs,numberOfPriorities,pageNum,requestNumber);
+                   pWaitingQueue.push(printJob, clock, *out);
+				   printJobs--;//decrement print jobs left
                    requestNumber++;//print job id number
                }
            }
@@ -266,10 +318,10 @@ void runSimulation(){
          //pair the next print job with a free printers
          printerID = printers.getFreePrinterID();//get free printer
          while(printerID != -1 && !pWaitingQueue.queueEmpty()){
-               printJob = pWaitingQueue.queueFront();//get print job in front
+               printJob = pWaitingQueue.front();//get print job in front
                //move print job to printer
                printers.setPrinterBusy(printerID,printJob,printJob.getNumberOfPages(),clock, *out);
-               pWaitingQueue.queuePop();
+               pWaitingQueue.pop(clock, *out);
                printerID = printers.getFreePrinterID();//check for free printer
          }
                        
@@ -280,7 +332,7 @@ void runSimulation(){
          clock++;//update the clock time 
       }
       
-     // printResults(maxPages, printRate, numOfPrinters, numOfPrintJobs, seed, clock, *out);
+      //printResults(maxPages, printRate, numOfPrinters, numOfPrintJobs, seed, clock, *out);
       //If a filename was given make sure to close it
       if(checkFile==1)
         outfile.close();

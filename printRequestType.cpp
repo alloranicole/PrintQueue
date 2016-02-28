@@ -6,29 +6,18 @@
           to print a specific number of pages.
      Notes for grading:
 */
-
-#include <iostream>
-
+#include<iostream>
 #include "printRequestType.h"
 
 using namespace std;
 
-void printRequestType::setPrintRequestType(int priorCut[], int numPrior, int maxPage, int numPage, int numReq)
+void printRequestType::setPrintRequestType(int priorCut[], int numPrior, int numPage, int numReq)
 {
      bool found = false;
-     int priorityCutoffs[numPrior];
      int k = 0;
-     for(int i = 0; i < numPrior - 1; i++)
-          priorityCutoffs[i] = priorCut[i];
-     priorityCutoffs[numPrior - 1] = maxPage;
-     if(numPage > maxPage)//quick test incase bad info is recieved
-     {
-          cout << "Warning: Print Request #" << numReq << " has more pages than allowed." << endl;
-          Priority = numPrior;
-     }
      while(found == false)
      {
-          if(numPage <= priorityCutoffs[k])
+          if(numPage <= priorCut[k])
           {
                found = true;
                Priority = k + 1;
@@ -39,22 +28,13 @@ void printRequestType::setPrintRequestType(int priorCut[], int numPrior, int max
      RequestNumber = numReq;
 }
 
-printRequestType::printRequestType(int priorCut[], int numPrior, int maxPage, int numPage, int numReq)
+printRequestType::printRequestType(int priorCut[], int numPrior, int numPage, int numReq)
 {
      bool found = false;
-     int priorityCutoffs[numPrior];
      int k = 0;
-     for(int i = 0; i < numPrior - 1; i++)
-          priorityCutoffs[i] = priorCut[i];
-     priorityCutoffs[numPrior - 1] = maxPage;
-     if(numPage > maxPage)//quick test incase bad info is recieved
-     {
-          cout << "Warning: Print Request #" << numReq << " has more pages than allowed." << endl;
-          Priority = numPrior;
-     } 
      while(found == false)
      {
-          if(numPage <= priorityCutoffs[k])
+          if(numPage <= priorCut[k])
           {
                found = true;
                Priority = k + 1;
@@ -87,9 +67,9 @@ int printRequestType::getRequestNumber() const
      return RequestNumber;
 }
 
-void printRequestType::print()
+void printRequestType::print(ostream& out)
 {
-     cout << "Print Request number " << RequestNumber;
-     cout << " has " << NumberOfPages << " page(s) and";
-     cout << " has a priority of " << Priority << "." << endl;
+     out << "Job Number-----: " << RequestNumber << endl;
+     out << "Number of Pages: " << NumberOfPages << endl;
+     out << "Priority-------: " << Priority << endl;
 }

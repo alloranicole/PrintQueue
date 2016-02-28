@@ -9,11 +9,14 @@
 
 #ifndef H_printRequestType
 #define H_printRequestType
+#include<iostream>
+
+using namespace std;
 
 class printRequestType
 {
      public:
-          void setPrintRequestType(int priorCut[], int numPrior, int maxPage, int numPage, int numReq);
+          void setPrintRequestType(int priorCut[], int numPrior, int numPage, int numReq);
           //Sets the values of the private variables.
           //Post condition:
                //NumberOfPages = numPage
@@ -24,7 +27,7 @@ class printRequestType
                     //3. Compare number of pages to cutoffs until a cutoff is greater or equal
                     //4. Assign Priority the value of the position in the array that the cutoff was found
 
-          printRequestType(int priorCut[], int numPrior, int maxPage, int numPage, int numReq);
+          printRequestType(int priorCut[], int numPrior, int numPage, int numReq);
           //Default constructor with values.
           //Post condition: see setPrintRequestType
           
@@ -44,7 +47,7 @@ class printRequestType
           //returns the value of the private variable RequestNumber.
           //Postcondition: Value of RequestNumber is returned.
 
-          void print();
+          void print(ostream& out);
           //displays all of the vaiables for testing purposes or
           //if anyone would like to see them.
           //postcondition: NumberOfPages, Priority, and RequestNumber
