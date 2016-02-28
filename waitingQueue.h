@@ -33,7 +33,7 @@ class waitingQueue
                //NumberOfPriorities = 1
                //list is initialized to be an array with 1 element
 
-          void push(printRequestType pushMe);
+          void push(printRequestType pushMe, int clock, ostream& out);
           //places pushMe in the queue representing
           //the same priority
           //Postcondition:
@@ -66,7 +66,7 @@ class waitingQueue
                //back of first non-empty queue is returned
                //message is given if queue was empty
 
-          void pop();
+          void pop(printRequestType pushMe, int clock, ostream& out);
           //searches the queues from first to last to find 
           //the first queue with an item. The front item of 
           //that queue is popped.

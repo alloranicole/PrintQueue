@@ -96,7 +96,7 @@ printRequestType waitingQueue::back()
      return back;
 }
 
-void waitingQueue::pop(int clock, ostream& out)
+void waitingQueue::pop(printRequestType pushMe,int clock, ostream& out)
 {
      out << "At time unit " << clock << " the following item exited the waiting queue:" << endl;
      pushMe.print(out);
