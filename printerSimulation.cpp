@@ -118,7 +118,7 @@ double& failureProb, int& failureTime, int& numberOfPriorities, int*& priorityCu
 {
      char check; 
      
-     cout << "Use the default number of jobs? [y/n]: ";
+     cout << "Use the default number of jobs? (default = 100) [y/n]: ";
      cin >> check;
      cout << endl;
      if(check == 'Y' || check == 'y')
@@ -132,7 +132,7 @@ double& failureProb, int& failureTime, int& numberOfPriorities, int*& priorityCu
           cout << endl;
      }
      
-     cout << "Use the default maximum number of pages? [y/n]: ";
+     cout << "Use the default maximum number of pages? (default = 50) [y/n]: ";
      cin >> check;
      cout << endl;
      if(check == 'Y' || check == 'y')
@@ -146,7 +146,7 @@ double& failureProb, int& failureTime, int& numberOfPriorities, int*& priorityCu
           cout << endl;
      }
 
-     cout << "Use the default number of printers? [y/n]: ";
+     cout << "Use the default number of printers? (default = 3) [y/n]: ";
      cin >> check;
      cout << endl;
      if(check == 'Y' || check == 'y')
@@ -323,7 +323,7 @@ void runSimulation(){
  //    setUpDist(poissonDist,k,avgJobs);
      
      printRequestType printJob;
-     waitingQueue pWaitingQueue;
+     waitingQueue pWaitingQueue(numberOfPriorities);
      int printJobsLeft = numOfPrintJobs;//holds total number of print jobs
      //sets up list of # printers 
      printerListType printers(numOfPrinters, printRate, cost, maintenanceLimit, maintenanceTime, failureProb, failureTime);
@@ -345,7 +345,7 @@ void runSimulation(){
                    //add print job to the queue
                    printJob.setPrintRequestType(priorityCutoffs,numberOfPriorities,pageNum,requestNumber);
                    pWaitingQueue.push(printJob, clock, *out);
-	           printJobsLeft--;//decrement print jobs left
+	              printJobsLeft--;//decrement print jobs left
                    requestNumber++;//print job id number
               // }
            }
