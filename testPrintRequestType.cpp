@@ -6,26 +6,26 @@
      Notes for grading:
 */
 
-#include <iostream>
+#include<iostream>
 #include "printRequestType.h"
 
 using namespace std;
 
 int main()
 {
-     int cutoffs[4] = {5,10,15,20};
+     ostream* out = &cout;
+     int cutoffs[5] = {5,10,15,20,25};
      int priorities = 5;
-     int max = 25;
      
-     printRequestType One(cutoffs,priorities,max,4,1);
-     printRequestType Two(cutoffs,priorities,max,10,2); 
-     printRequestType Three(cutoffs,priorities,max,13,3); 
-     printRequestType Four(cutoffs,priorities,max,16,4); 
-     printRequestType Five(cutoffs,priorities,max,22,5);
+     printRequestType One(cutoffs,priorities,4,1);
+     printRequestType Two(cutoffs,priorities,10,2); 
+     printRequestType Three(cutoffs,priorities,13,3); 
+     printRequestType Four(cutoffs,priorities,16,4); 
+     printRequestType Five(cutoffs,priorities,22,5);
 
-     One.print();
-     Two.print(); 
-     Three.print(); 
-     Four.print(); 
-     Five.print();
+     One.print(*out);
+     Two.print(*out); 
+     Three.print(*out); 
+     Four.print(*out); 
+     Five.print(*out);
 }

@@ -15,19 +15,18 @@ using namespace std;
 
 int main()
 {
-     int cutoffs[4] = {5,10,15,20};
+     int cutoffs[5] = {5,10,15,20,25};
      int priorities = 5;
-     int max = 25;
 
      waitingQueue testWaiting(priorities);
 
      cout << "Is testWaiting emptry? " << testWaiting.empty() << endl;
      
-     printRequestType One(cutoffs,priorities,max,4,1);
-     printRequestType Two(cutoffs,priorities,max,10,2); 
-     printRequestType Three(cutoffs,priorities,max,13,3); 
-     printRequestType Four(cutoffs,priorities,max,16,4); 
-     printRequestType Five(cutoffs,priorities,max,22,5);
+     printRequestType One(cutoffs,priorities,4,1);
+     printRequestType Two(cutoffs,priorities,10,2); 
+     printRequestType Three(cutoffs,priorities,13,3); 
+     printRequestType Four(cutoffs,priorities,16,4); 
+     printRequestType Five(cutoffs,priorities,22,5);
 
      testWaiting.push(Three);
      testWaiting.push(Four);
