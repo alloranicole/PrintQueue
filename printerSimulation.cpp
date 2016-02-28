@@ -23,6 +23,8 @@ void setSimulationParameters(int& maxPages, int*& printRate, double*& cost, int&
 //Postcondition: number of pages of a print job is returned
 int printJobArrival(int maxPages);
 
+int printJobs(
+
 void printResults(int& maxPages, int& printRate, int& numOfPrinters, int& numOfPrintJobs, unsigned int& seed, ostream& outfile);
 
 //Function to run the printer simulation
@@ -35,6 +37,41 @@ int main()
     
     return 0;
 }
+
+double P(int k, int avgJobs){
+       double lambda = (double)(1/avgJobs);
+       
+}
+double[] setUpDist(int avgJobs){
+         double total = 0;
+         int k = 0;
+         while(total < .95){
+              total += P(k, avgJobs);
+              k++;
+         }
+         double a[k+1];
+         a[0] = P(0, avgJobs);
+         for(int i = 1; i < k; i++)
+            a[i] = a[i-1] + P(i, avgJobs);
+         a[k] = 1;
+         return a;        
+ }   
+     
+    
+
+int printJobs(double a[]){
+         //look in movie simulation for random
+         double printJobs = rand() % 1;
+         if(printJobs < a[0])
+            return 0;
+         //look up how to get size of array
+         for(int i = 1; i < size; i++)
+             if(printJobs > a[i-1] && printJobs < a[i])
+                return i;
+}          
+             
+         
+    
 
 int printJobArrival(int maxPages){
     int pages;
@@ -164,7 +201,7 @@ void runSimulation(){
 
      //Variables
      int maxPages,numOfPrinters,numOfPrintJobs,clock = 1,pageNum;
-     int maintenanceLimit, maintenanceTime, failureTime;
+     int maintenanceLimit, maintenanceTime, failureTime, printJobs;
      double failureProb;
      int *printRate;
      double *cost;
@@ -173,7 +210,7 @@ void runSimulation(){
      ofstream outfile;//output file
      int checkFile;//tracks if filename was given
      ostream* out = &cout;//Prints to specified location 
-   
+      
      //Gets initial values from user
      setSimulationParameters(maxPages, printRate, cost, numOfPrinters, numOfPrintJobs, seed, checkFile, maintenanceLimit, maintenanceTime, failureProb, failureTime);
      //Decides if the user wants to enter a file name 
@@ -195,6 +232,7 @@ void runSimulation(){
        out = &outfile;//changes which location is sent to functions
      } 
      
+     double poissonDist[] = setUpDist(); 
      
      printRequestType printJob;
      waitingQueue pWaitingQueue;
@@ -212,12 +250,16 @@ void runSimulation(){
             
          //Get the number of pages of the print job if print jobs available
          if(printJobs > 0){
-            pageNum= printJobArrival(maxPages);
-            //add print job to the queue
-            printJob.setPrintRequestType(pageNum,requestNumber);
-            pWaitingQueue.add(printJob);
-            printJobs--;//decrement print jobs left
-            requestNumber++;//print job id number
+            printJobs = printJobs(a);
+            if(printJobs > 0)
+               for(int i = 1; i <= printJobs; i++){
+                   pageNum= printJobArrival(maxPages);
+                   //add print job to the queue
+                   printJob.setPrintRequestType(pageNum,requestNumber);
+                   pWaitingQueue.add(printJob);
+                   printJobs--;//decrement print jobs left
+                   requestNumber++;//print job id number
+               }
            }
 
          //if there are print jobs in the queue and a printer is free
@@ -226,7 +268,7 @@ void runSimulation(){
          while(printerID != -1 && !pWaitingQueue.queueEmpty()){
                printJob = pWaitingQueue.queueFront();//get print job in front
                //move print job to printer
-                  printers.setPrinterBusy(printerID,printJob,printJob.getNumberOfPages(),clock, *out);
+               printers.setPrinterBusy(printerID,printJob,printJob.getNumberOfPages(),clock, *out);
                pWaitingQueue.queuePop();
                printerID = printers.getFreePrinterID();//check for free printer
          }
