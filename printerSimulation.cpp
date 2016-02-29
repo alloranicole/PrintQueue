@@ -19,7 +19,7 @@ using namespace std;
 
 //Function to print to the screen and ask for all of the simulation parameters
 //Postcondition: simulation parameters have value given by user
-void setSimulationParameters(int& maxPages, int*& printRate, double*& cost, int& numOfPrinters, int& numOfPrintJobs, unsigned int& seed, int& checkFile, int& maintenanceLimit, int& maintanenceTime, double& failureProb, int& failureTime, int& numberOfPriorities, int*& priorityCutoffs, double& avgJobs);
+void setSimulationParameters(istream& in, int& maxPages, int*& printRate, double*& cost, int& numOfPrinters, int& numOfPrintJobs, unsigned int& seed, int& checkFile, int& maintenanceLimit, int& maintanenceTime, double& failureProb, int& failureTime, int& numberOfPriorities, int*& priorityCutoffs, double& avgJobs);
 //Function to return the random size of the print job
 //Postcondition: number of pages of a print job is returned
 int printJobArrival(int maxPages, int L, int* U, double* a);
@@ -139,14 +139,14 @@ int printJobArrival(int maxPages, int L, int* U, double* a){
 }   
          
 
-void setSimulationParameters(int& maxPages, int*& printRate, double*& cost, int& numOfPrinters,
+void setSimulationParameters(istream& in,int& maxPages, int*& printRate, double*& cost, int& numOfPrinters,
 int& numOfPrintJobs, unsigned int& seed, int& checkFile, int& maintenanceLimit, int& maintanenceTime,
 double& failureProb, int& failureTime, int& numberOfPriorities, int*& priorityCutoffs, double& avgJobs)
 {
      char check; 
      
      cout << "Use the default number of jobs? (default = 100) [y/n]: ";
-     cin >> check;
+     in >> check;
      cout << endl;
      if(check == 'Y' || check == 'y')
      {
@@ -155,12 +155,12 @@ double& failureProb, int& failureTime, int& numberOfPriorities, int*& priorityCu
      else
      {
           cout << "Enter the total number of print jobs: ";
-          cin >> numOfPrintJobs;
+          in >> numOfPrintJobs;
           cout << endl;
      }
      
      cout << "Use the default maximum number of pages? (default = 50) [y/n]: ";
-     cin >> check;
+     in >> check;
      cout << endl;
      if(check == 'Y' || check == 'y')
      {
@@ -169,12 +169,12 @@ double& failureProb, int& failureTime, int& numberOfPriorities, int*& priorityCu
      else
      {
           cout << "Enter the maximum number of pages: ";
-          cin >> maxPages;
+          in >> maxPages;
           cout << endl;
      }
 
      cout << "Use the default number of printers? (default = 3) [y/n]: ";
-     cin >> check;
+     in >> check;
      cout << endl;
      if(check == 'Y' || check == 'y')
      {
@@ -183,7 +183,7 @@ double& failureProb, int& failureTime, int& numberOfPriorities, int*& priorityCu
      else
      {
           cout << "Enter the number of printers: ";
-          cin >> numOfPrinters;
+          in >> numOfPrinters;
           cout << endl;
      }
 
@@ -192,7 +192,7 @@ double& failureProb, int& failureTime, int& numberOfPriorities, int*& priorityCu
       
      cout << "Separate printing rates for the " << numOfPrinters << 
              " printers? [Y/N]: ";
-     cin >> check;
+     in >> check;
      cout << endl; 
 
      if(check == 'Y' || check == 'y')
@@ -200,14 +200,14 @@ double& failureProb, int& failureTime, int& numberOfPriorities, int*& priorityCu
         for(int i = 0; i < numOfPrinters; i++)
         {
             cout << "Enter the rate for printer " << (i+1) << " : ";       
-            cin >> printRate[i];
+            in >> printRate[i];
             cout << endl; 
         }  
      }
      else
      {
         cout << "Enter the rate for printers: ";
-        cin >> printRate[0];
+        in >> printRate[0];
         cout << endl;       
         for(int i = 1; i < numOfPrinters; i++)
         {
@@ -215,39 +215,39 @@ double& failureProb, int& failureTime, int& numberOfPriorities, int*& priorityCu
         }
      }       
      cout << "Enter the cutoff for maintenance: ";
-     cin >> maintenanceLimit;
+     in >> maintenanceLimit;
      cout << endl; 
    
      cout << "Enter the time for maintanence: ";
-     cin >> maintanenceTime;
+     in >> maintanenceTime;
      cout << endl; 
 
      cout << "Enter the probability for failure: ";
-     cin >> failureProb;
+     in >> failureProb;
      cout << endl; 
     
      cout << "Enter the time to fix failure: ";
-     cin >> failureTime;
+     in >> failureTime;
      cout << endl; 
 
      cout << "Average number of prints jobs per minute: ";
-     cin >> avgJobs;
+     in >> avgJobs;
      cout << endl;
      
      cout << "Separate cost per page for the " << numOfPrinters << 
              " printers? [Y/N]: ";
-     cin >> check;
+     in >> check;
      cout << endl; 
 
      if(check == 'Y' || check == 'y'){
         for(int i = 0; i < numOfPrinters; i++){
             cout << "Enter the cost per page for printer " << (i+1) << " : ";       
-            cin >> cost[i];
+            in >> cost[i];
             cout << endl; 
           }  
      }else{
         cout << "Enter the cost per page for printers: ";
-        cin >> cost[0];
+        in >> cost[0];
         cout << endl;       
         for(int i = 1; i < numOfPrinters; i++){
             cost[i] = cost[0];
@@ -255,23 +255,23 @@ double& failureProb, int& failureTime, int& numberOfPriorities, int*& priorityCu
      }
 
      cout << "Enter number of priority levels: ";
-     cin >> numberOfPriorities;
+     in >> numberOfPriorities;
      priorityCutoffs = new int[numberOfPriorities];
      for(int i = 0; i < numberOfPriorities - 1; i++)
      {    
           cout << "Maximum page value of priority level " << i + 1 << ": ";
-          cin >> priorityCutoffs[i];
+          in >> priorityCutoffs[i];
      }
      priorityCutoffs[numberOfPriorities-1] = maxPages;
      cout << endl;
        
      cout << "Want to enter a seed value? [Y/N]: ";
-     cin >> check;
+     in >> check;
      cout << endl; 
  
      if(check == 'Y' || check == 'y'){
        cout << "Enter seed value: ";       
-       cin >> seed;
+       in >> seed;
        cout << endl; 
        srand(seed);
      }else{
@@ -279,7 +279,7 @@ double& failureProb, int& failureTime, int& numberOfPriorities, int*& priorityCu
        srand(time(0));
      }
      cout << "Want simulation info sent to file? [Y/N]: ";
-     cin >> check;
+     in >> check;
      cout << endl; 
      //This variable is used in the runSimulation to check if a user gives a
      //filename
@@ -320,25 +320,48 @@ void runSimulation(){
      unsigned int seed;
      int requestNumber = 1, printerID;
      ofstream outfile;//output file
+     ifstream inputfile;
      int checkFile;//tracks if filename was given
      ostream* out = &cout;//Prints to specified location 
-      
+     istream* in = &cin;    
+     char check; 
+     
+     cout<< "Want simulation parameters inputted from a file? [Y/N]: ";
+     cin>> check;
+     cout << endl;
+   
+     if(check == 'Y' || check == 'y'){
+        char filename[30];
+        cout<<"Enter file name: ";
+        cin >> filename;
+        cout << endl;
+        inputfile.open(filename);
+        while(inputfile.fail()){
+            cerr<<"Problem with input file."<<endl;
+            cout << "Enter file name: ";
+            cin >> filename;
+            cout << endl;
+            inputfile.open(filename);
+        }
+        in = &inputfile;
+     }         
+
      //Gets initial values from user
-     setSimulationParameters(maxPages, printRate, cost, numOfPrinters, numOfPrintJobs, seed, 
+     setSimulationParameters(*in,maxPages, printRate, cost, numOfPrinters, numOfPrintJobs, seed, 
           checkFile, maintenanceLimit, maintenanceTime, failureProb, failureTime, numberOfPriorities, priorityCutoffs, avgJobs);
      //Decides if the user wants to enter a file name 
      //then opens said file
      if(checkFile == 1){
        char file[30];
        cout << "Enter file name: ";
-       cin >> file;
+       *in >> file;
        cout << endl;
        outfile.open(file);
        //If there is an issue with the filename asks for another
        while(outfile.fail()){
           cerr<<"Problem with output file."<<endl;
           cout << "Enter file name: ";
-          cin >> file;
+          *in >> file;
           cout << endl;
           outfile.open(file);
        }
