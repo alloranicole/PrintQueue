@@ -19,20 +19,22 @@ using namespace std;
 
 //Function to print to the screen and ask for all of the simulation parameters
 //Postcondition: simulation parameters have value given by user
-void setSimulationParameters(int& maxPages, int*& printRate, double*& cost, int& numOfPrinters, int& numOfPrintJobs, unsigned int& seed, int& checkFile, int& maintenanceLimit, int& maintanenceTime, double& failureProb, int& failureTime, int& numberOfPriorities, int*& priorityCutoffs, int& avgJobs);
+void setSimulationParameters(int& maxPages, int*& printRate, double*& cost, int& numOfPrinters, int& numOfPrintJobs, unsigned int& seed, int& checkFile, int& maintenanceLimit, int& maintanenceTime, double& failureProb, int& failureTime, int& numberOfPriorities, int*& priorityCutoffs, double& avgJobs);
 //Function to return the random size of the print job
 //Postcondition: number of pages of a print job is returned
-int printJobArrival(int maxPages);
+int printJobArrival(int maxPages, int L, int* U, double* a);
 
-double P(int k, int avgJobs);
+double P(int k, double avgJobs);
 
 int fact(int x);
 
-int findKMax(int avgJobs);
+int findKMax(double avgJobs);
 
-void setUpDist(double*& poissonDist, int k, int avgJobs);
+void setUpDist(double*& poissonDist, int k, double avgJobs);
 
 int findPrintJobs(double*& a, int k);
+
+void setUpPageDist(double*& a, int L);
 
 //Function designed to print out both the initial input and the results
 //uses ostream to output to whichever medium is sent, ex. cout or output file
@@ -55,34 +57,27 @@ int fact(int x){
        return x * fact(x-1);
 }
 
-double P(int k, int avgJobs){
-       double lambda = (double) 1.0/avgJobs;
-       cout << "avgjobs: " << avgJobs << endl; 
-       cout << "lambda: " << lambda << endl;
+double P(int k, double avgJobs){
+       double lambda =  avgJobs;
        int factK = fact(k);
-       cout << "factK: " << factK << endl;
        double ex = exp(-1 * lambda);
-       cout << "ex: " << ex << endl;
        double numerator = pow(lambda,k) * ex;
-       cout << "numerator: " << numerator << endl;
        double total = (double) numerator / factK;
-       cout << "P(k): " << total << endl;
        return total;      
        
 }
 
-int findKMax(int avgJobs){
+int findKMax(double avgJobs){
          double total = 0;
          int k = 0;
          while(total < .95){
               total += P(k, avgJobs);
               k++;
          }
-         cout << "k : " << k << endl;
          return k;
 }
 
-void setUpDist(double*& poissonDist, int k, int avgJobs){
+void setUpDist(double*& poissonDist, int k, double avgJobs){
          poissonDist[0] = P(0, avgJobs);
          for(int i = 1; i < k; i++)
             poissonDist[i] = poissonDist[i-1] + P(i, avgJobs);
@@ -91,30 +86,62 @@ void setUpDist(double*& poissonDist, int k, int avgJobs){
 
 int findPrintJobs(double*& a, int k){
          double printJobs = ((double) rand() / (RAND_MAX));
-         if(printJobs < a[0])
+         if(printJobs <= a[0])
             return 0;
          for(int i = 1; i < k+1; i++){
-             if(printJobs > a[i-1] && printJobs < a[i]){
+             if(printJobs > a[i-1] && printJobs <= a[i]){
                 return i;
-                cout << "Distribution K: " << i << endl;
               }
          }
          return 0;
 }          
-             
-         
-    
 
-int printJobArrival(int maxPages){
-    int pages;
-    //gets random page number from 1 to maxPages
-    pages = rand() % maxPages + 1;
-    return pages;
+void setUpPageDist(double*& a, int L){
+         if(L == 1)
+            a[0] = 1;
+         else if(L == 2){
+            a[0] = .5;
+            a[1] = 1;
+         }else if(L == 3){
+            a[0] = (double) 1.0/3;
+            a[1] = (double) 2.0/3;
+            a[2] = 1;
+         }else if(L > 3){
+            a[0] = (double) 1.0/3;
+            for(int i = 1; i < L - 1; i++)
+                a[i] = (1.0/(3+i)) + a[i-1];
+            a[L-1] = 1;
+         }
 }
+             
+
+int printJobArrival(int maxPages, int L, int* U, double* a){
+    int pages, priority;
+    double random = ((double) rand() / (RAND_MAX));
+    if(random <= a[0])
+       priority = 1;
+    else 
+      for(int i = 1; i < L; i++)
+          if(random > a[i-1] && random <= a[i]){
+             priority = i+1;
+             break;
+          }
+    if(priority == 1){
+        pages = rand() % U[0] + 1;
+        return pages;
+     }else
+        for(int i = 1; i < L; i++)
+            if(priority == (i+1)){
+               pages = rand() % (U[i] - U[i-1]) + (U[i-1] + 1);
+               return pages;
+            }
+     return 0;
+}   
+         
 
 void setSimulationParameters(int& maxPages, int*& printRate, double*& cost, int& numOfPrinters,
 int& numOfPrintJobs, unsigned int& seed, int& checkFile, int& maintenanceLimit, int& maintanenceTime,
-double& failureProb, int& failureTime, int& numberOfPriorities, int*& priorityCutoffs, int& avgJobs)
+double& failureProb, int& failureTime, int& numberOfPriorities, int*& priorityCutoffs, double& avgJobs)
 {
      char check; 
      
@@ -286,10 +313,10 @@ void runSimulation(){
      //Variables
      int maxPages,numOfPrinters,numOfPrintJobs,clock = 1,pageNum;
      int maintenanceLimit, maintenanceTime, failureTime, printJobs;
-     int numberOfPriorities, *priorityCutoffs, avgJobs;
-     double failureProb;
+     int numberOfPriorities, *priorityCutoffs;
+     double failureProb, avgJobs;
      int *printRate;
-     double *cost, *poissonDist;
+     double *cost, *poissonDist, *pageDist;
      unsigned int seed;
      int requestNumber = 1, printerID;
      ofstream outfile;//output file
@@ -318,10 +345,12 @@ void runSimulation(){
        out = &outfile;//changes which location is sent to functions
      } 
      
- //    int k = findKMax(avgJobs);
- //    poissonDist = new double[k+1];
- //    setUpDist(poissonDist,k,avgJobs);
-     
+     int k = findKMax(avgJobs);
+     poissonDist = new double[k+1];
+     setUpDist(poissonDist,k,avgJobs);
+     pageDist = new double[numberOfPriorities];
+     setUpPageDist(pageDist, numberOfPriorities);
+ 
      printRequestType printJob;
      waitingQueue pWaitingQueue(numberOfPriorities);
      int printJobsLeft = numOfPrintJobs;//holds total number of print jobs
@@ -338,16 +367,16 @@ void runSimulation(){
             
          //Get the number of pages of the print job if print jobs available
          if(printJobsLeft > 0){
-           // printJobs = findPrintJobs(poissonDist, k);
-           // if(printJobs > 0)
-             //  for(int i = 1; i <= printJobs; i++){
-                   pageNum= printJobArrival(maxPages);
+            printJobs = findPrintJobs(poissonDist, k);
+            if(printJobs > 0)
+               for(int i = 1; i <= printJobs; i++){
+                   pageNum = printJobArrival(maxPages,numberOfPriorities,priorityCutoffs,pageDist);
                    //add print job to the queue
                    printJob.setPrintRequestType(priorityCutoffs,numberOfPriorities,pageNum,requestNumber);
                    pWaitingQueue.push(printJob, clock, *out);
-	              printJobsLeft--;//decrement print jobs left
+	           printJobsLeft--;//decrement print jobs left
                    requestNumber++;//print job id number
-              // }
+               }
            }
 
          //if there are print jobs in the queue and a printer is free
