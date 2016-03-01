@@ -20,7 +20,7 @@ using namespace std;
 //Function to print to the screen and ask for all of the simulation parameters
 //Postcondition: simulation parameters have value given by user also includes the variables that are different
 //per printer
-void setSimulationParameters(istream& in, int& maxPages, int*& printRate, double*& cost, int& numOfPrinters, int& numOfPrintJobs, unsigned int& seed, int& checkFile, int& maintenanceLimit, int& maintanenceTime, double& failureProb, int& failureTime, int& numberOfPriorities, int*& priorityCutoffs, double& avgJobs);
+void setSimulationParameters(istream& in, int& maxPages, int*& printRate, double*& cost, int& numOfPrinters, int& numOfPrintJobs, unsigned int& seed, int& checkFile, int& maintenanceLimit, int& maintenanceTime, double& failureProb, int& failureTime, int& numberOfPriorities, int*& priorityCutoffs, double& avgJobs);
 //Function to return the random size of the print job
 //Postcondition: number of pages of a print job is returned
 int printJobArrival(int maxPages, int L, int* U, double* a);
@@ -44,10 +44,6 @@ void setUpPageDist(double*& a, int L);
 
 //Function designed to print out both the initial input and the results
 //uses ostream to output to whichever medium is sent, ex. cout or output file
-/*void printResults(int& maxPages, int*& printRate, double*& cost, int& numOfPrinters,
-     int& numOfPrintJobs, unsigned int& seed, int& checkFile, int& maintenanceLimit, int& maintanenceTime,
-     double& failureProb, int& failureTime, int& numberOfPriorities, int*& priorityCutoffs, double& avgJobs);
-*/
 void printResults(int runtime, waitingQueue *wait, printerListType *printers, ostream& outfile);
 //Function to run the printer simulation
 //Postcondition: simulation is run calculating the results which are then displayed
@@ -247,7 +243,7 @@ void setSimulationParameters(istream& in,int& maxPages, int*& printRate, double*
      in >> maintenanceLimit;
      cout << endl; 
      
-     cout << "Use the default time for maintanance? (default = 10 minutes) [y/n]: ";
+     cout << "Use the default time for maintenance? (default = 10 minutes) [y/n]: ";
      in >> check;
      if(check == 'Y' || check == 'y')
      {
@@ -257,7 +253,7 @@ void setSimulationParameters(istream& in,int& maxPages, int*& printRate, double*
      }
      else
      {
-          cout << "Enter the time for maintanence: ";
+          cout << "Enter the time for maintenance: ";
           in >> maintenanceTime;
           cout << endl;
      } 
@@ -280,7 +276,7 @@ void setSimulationParameters(istream& in,int& maxPages, int*& printRate, double*
           cout << endl;
      } 
 
-     cout << "Average number of prints jobs per minute: ";
+     cout << "Average number of print jobs per minute: ";
      in >> avgJobs;
      cout << endl;
      
@@ -299,7 +295,7 @@ void setSimulationParameters(istream& in,int& maxPages, int*& printRate, double*
      else
      {
           cout << "Use default cost per page? (default = $0.05) [y/n]: ";
-          cin >> check;
+          in >> check;
           if(check == 'Y' || check == 'y')
           {
              for(int i = 0; i < numOfPrinters; i++)
@@ -370,8 +366,6 @@ void printResults(int runtime, waitingQueue *wait, printerListType *printers, os
      outfile << "The simulation ran for " << (runtime-1) << " minute(s)." << endl;
      outfile << "In the process, " << printers->getTotalPagesPrinted() << " pages were printed." << endl;
      outfile << "This cost you $" << printers->getTotalCost() << "." << endl;
-     //Shouldn't be printers, should be the printjobs
-     /*outfile << "On average, the printers had to wait " << avgPrinterWait << " minutes for a job." << endl;*/
      wait->printResults(outfile,runtime);
      printers->printResults(outfile,runtime);   
 } 
@@ -454,6 +448,7 @@ void runSimulation(){
      //if no more print jobs AND no busy printers AND no jobs in the queue
      while(printJobsLeft > 0 || printers.getNumberOfBusyPrinters() != 0 ||
          pWaitingQueue.size() != 0){
+           *out<<"\nTime: "<<clock<<endl;
          //Update the printers in use by decrementing the pages to print 
          //by the print rate
          printers.updatePrinters(clock,*out);

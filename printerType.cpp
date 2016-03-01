@@ -31,6 +31,7 @@ printerType::printerType(){
        totalPagesPrinted = 0;
        totalTime = 0;
        totalCost = 0;
+       totalJobs = 0;
 }
 
 bool printerType::isFree() const{
@@ -115,7 +116,7 @@ double printerType::getTotalCost(){
 void printerType::checkForMaintenance(ostream& outfile, int ID, int clock){
        if(maintenanceLimit <= 0 && !isInMaintenance()){
           setInMaintenance();
-          outfile << "Printer " << ID << " is currently in maintanence at time "
+          outfile << "Printer " << ID << " is currently in maintenance at time "
                   << clock << endl;
        }else if(maintenanceTime > 0 && isInMaintenance())
                maintenanceTime--;
@@ -123,7 +124,7 @@ void printerType::checkForMaintenance(ostream& outfile, int ID, int clock){
                maintenanceTime = mTValue;
                maintenanceLimit = mLValue;
                setIsWorking();
-               outfile << "Printer " << ID << " is out of maintanence at time "
+               outfile << "Printer " << ID << " is out of maintenance at time "
                        << clock << endl;
        }
 }

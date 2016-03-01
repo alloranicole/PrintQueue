@@ -14,7 +14,7 @@
 using namespace std;
 
 printerListType::printerListType(int num, int* printRate, double* cost, 
-                                 int maintenanceLimit, int maintanenceTime,
+                                 int maintenanceLimit, int maintenanceTime,
                                  double failureProb, int failureTime){
       numOfPrinters = num;
       printers = new printerType[num];
@@ -22,7 +22,7 @@ printerListType::printerListType(int num, int* printRate, double* cost,
           printers[i].setPrintRate(printRate[i]);
           printers[i].setCost(cost[i]);
           printers[i].setMaintenanceLimit(maintenanceLimit);
-          printers[i].setMaintenanceTime(maintanenceTime);
+          printers[i].setMaintenanceTime(maintenanceTime);
           printers[i].setFailureProb(failureProb);
           printers[i].setFailureTime(failureTime);
       }
