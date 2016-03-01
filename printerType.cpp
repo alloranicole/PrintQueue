@@ -27,7 +27,8 @@ printerType::printerType(){
        fTValue = 0;
        cost = 0;
        pagesToPrint = 0;
-       printRate = 0; 
+       printRate = 0;
+       totalPagesPrinted = 0;
        totalTime = 0;
        totalCost = 0;
 }
@@ -156,10 +157,19 @@ void printerType::updateTotalCost(){
                
 void printerType::decreasePagesToPrint(ostream& outfile,int ID, int clock){
        checkForFailure(outfile, ID, clock);
-       if(!isOffline()){      
-       pagesToPrint -= printRate;
-       maintenanceLimit -= printRate;
-       totalTime++;
+       if(!isOffline())
+       {      
+            pagesToPrint -= printRate;
+            maintenanceLimit -= printRate;
+            totalTime++;
+            if(pagesToPrint >= 0)
+            {
+                  totalPagesPrinted += printRate;
+            }
+            else
+            {
+                  totalPagesPrinted += printRate + pagesToPrint;
+            }
        }
 }
 
@@ -174,6 +184,17 @@ int printerType::getCurrentPrintJobNumber() const{
 int printerType::getCurrentPrintJobPages() const{
        return currentPrintJob.getNumberOfPages();
 }
+
+void printerType::updateTotalPagesPrinted(int value)
+{
+     totalPagesPrinted += value;
+}
+
+int printerType::getTotalPagesPrinted()
+{
+     return totalPagesPrinted;
+}
+
 
 
 

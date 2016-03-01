@@ -113,6 +113,12 @@ class printerType{
             //Postcondition: pages of the current print job returned
             int getCurrentPrintJobPages() const;
 
+            //Increases how many pages this printer has printed
+            void updateTotalPagesPrinted(int value);
+     
+            //Returns how many total pages were printed at the time it is called
+            int getTotalPagesPrinted();
+
       private:
             printRequestType currentPrintJob;
             string status;
@@ -125,6 +131,7 @@ class printerType{
             double cost;
             int pagesToPrint;
             int printRate;
+            int totalPagesPrinted;
             double failureProb;
             int failureTime;
             int fTValue;

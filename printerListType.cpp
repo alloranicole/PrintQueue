@@ -33,18 +33,43 @@ printerListType::~printerListType(){
 }
 
 int printerListType::getFreePrinterID() const{
-      int printerID = -1;
-      
+      int printerID;
+      int free[numOfPrinters]; //holds the IDs that were free
+      int wasFree = 0; //holds how many IDs were free
+      int random;
+
       for(int i = 0; i < numOfPrinters; i++)
-         if(printers[i].isFree() && !printers[i].isInMaintenance() && 
-            !printers[i].isOffline()){
-           printerID = i;
-           break;
-           }
+      {
+            if(printers[i].isFree() && !printers[i].isInMaintenance() &&
+            !printers[i].isOffline())
+            {
+                  free[wasFree] = i;
+                  wasFree++;
+            }
+      }
+
+      if (wasFree == 0)
+            printerID = -1;
+      else if(wasFree == 1)
+            printerID = free[0];
+      else
+      {     
+            random = rand() % wasFree;
+            printerID = free[random];
+      }
+      
+      
+      //Original Method that finds the first available printer
+      //for(int i = 0; i < numOfPrinters; i++)
+         //if(printers[i].isFree() && !printers[i].isInMaintenance() && 
+           //!printers[i].isOffline()){
+           //printerID = i;
+           //break;
+           //}
 
       return printerID;
 }
-
+     
 int printerListType::getNumberOfBusyPrinters() const{
       int busyPrinters = 0;
       for(int i = 0; i < numOfPrinters; i++)

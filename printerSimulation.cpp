@@ -38,7 +38,9 @@ void setUpPageDist(double*& a, int L);
 
 //Function designed to print out both the initial input and the results
 //uses ostream to output to whichever medium is sent, ex. cout or output file
-void printResults(int& maxPages, int& printRate, int& numOfPrinters, int& numOfPrintJobs, unsigned int& seed, ostream& outfile);
+void printResults(int& maxPages, int*& printRate, double*& cost, int& numOfPrinters,
+     int& numOfPrintJobs, unsigned int& seed, int& checkFile, int& maintenanceLimit, int& maintanenceTime,
+     double& failureProb, int& failureTime, int& numberOfPriorities, int*& priorityCutoffs, double& avgJobs);
 
 //Function to run the printer simulation
 //Postcondition: simulation is run calculating the results which are then displayed
@@ -140,17 +142,18 @@ int printJobArrival(int maxPages, int L, int* U, double* a){
          
 
 void setSimulationParameters(istream& in,int& maxPages, int*& printRate, double*& cost, int& numOfPrinters,
-int& numOfPrintJobs, unsigned int& seed, int& checkFile, int& maintenanceLimit, int& maintanenceTime,
-double& failureProb, int& failureTime, int& numberOfPriorities, int*& priorityCutoffs, double& avgJobs)
+     int& numOfPrintJobs, unsigned int& seed, int& checkFile, int& maintenanceLimit, int& maintenanceTime,
+     double& failureProb, int& failureTime, int& numberOfPriorities, int*& priorityCutoffs, double& avgJobs)
 {
      char check; 
      
-     cout << "Use the default number of jobs? (default = 100) [y/n]: ";
+     cout << "Use the default number of jobs? (default = 100 jobs) [y/n]: ";
      in >> check;
      cout << endl;
      if(check == 'Y' || check == 'y')
      {
           numOfPrintJobs = 100;
+          cout << endl;
      }
      else
      {
@@ -159,12 +162,13 @@ double& failureProb, int& failureTime, int& numberOfPriorities, int*& priorityCu
           cout << endl;
      }
      
-     cout << "Use the default maximum number of pages? (default = 50) [y/n]: ";
+     cout << "Use the default maximum number of pages? (default = 50 pages) [y/n]: ";
      in >> check;
      cout << endl;
      if(check == 'Y' || check == 'y')
      {
           maxPages = 50;
+          cout << endl;
      }
      else
      {
@@ -173,12 +177,13 @@ double& failureProb, int& failureTime, int& numberOfPriorities, int*& priorityCu
           cout << endl;
      }
 
-     cout << "Use the default number of printers? (default = 3) [y/n]: ";
+     cout << "Use the default number of printers? (default = 3 printers) [y/n]: ";
      in >> check;
      cout << endl;
      if(check == 'Y' || check == 'y')
      {
           numOfPrinters = 3;
+          cout << endl;
      }
      else
      {
@@ -191,7 +196,7 @@ double& failureProb, int& failureTime, int& numberOfPriorities, int*& priorityCu
      cost = new double[numOfPrinters];
       
      cout << "Separate printing rates for the " << numOfPrinters << 
-             " printers? [Y/N]: ";
+             " printer(s)? [Y/N]: ";
      in >> check;
      cout << endl; 
 
@@ -206,29 +211,64 @@ double& failureProb, int& failureTime, int& numberOfPriorities, int*& priorityCu
      }
      else
      {
-        cout << "Enter the rate for printers: ";
-        in >> printRate[0];
-        cout << endl;       
-        for(int i = 1; i < numOfPrinters; i++)
+        cout << "Use the default print rate? (default = 10 pages per minute) [y/n]: ";
+        in >> check;
+        cout << endl;
+        if(check == 'Y' || check == 'y')
         {
-            printRate[i] = printRate[0];
+            for(int i = 0; i < numOfPrinters; i++)
+            {
+                printRate[i] = 10;
+                cout << endl;
+            }
         }
-     }       
+        else
+        {
+            cout << "Enter the rate for printers: ";
+            in >> printRate[0];
+            cout << endl;       
+            for(int i = 1; i < numOfPrinters; i++)
+            {
+                printRate[i] = printRate[0];
+            }
+        }
+     }
+       
      cout << "Enter the cutoff for maintenance: ";
      in >> maintenanceLimit;
      cout << endl; 
-   
-     cout << "Enter the time for maintanence: ";
-     in >> maintanenceTime;
-     cout << endl; 
+     
+     cout << "Use the default time for maintanance? (default = 10 minutes) [y/n]: ";
+     in >> check;
+     if(check == 'Y' || check == 'y')
+     {
+          maintenanceTime = 10;
+          cout << endl;
+     }
+     else
+     {
+          cout << "Enter the time for maintanence: ";
+          in >> maintenanceTime;
+          cout << endl;
+     } 
 
      cout << "Enter the probability for failure: ";
      in >> failureProb;
      cout << endl; 
-    
-     cout << "Enter the time to fix failure: ";
-     in >> failureTime;
-     cout << endl; 
+     
+     cout << "Use default time to fix a failure? (default = 2 minutes) [y/n]: ";
+     in >> check;
+     if(check == 'Y' || check == 'y')
+     {
+          failureTime = 2;
+          cout << endl;
+     }
+     else
+     {
+          cout << "Enter the time to fix failure: ";
+          in >> failureTime;
+          cout << endl;
+     } 
 
      cout << "Average number of prints jobs per minute: ";
      in >> avgJobs;
@@ -261,6 +301,13 @@ double& failureProb, int& failureTime, int& numberOfPriorities, int*& priorityCu
      {    
           cout << "Maximum page value of priority level " << i + 1 << ": ";
           in >> priorityCutoffs[i];
+          while(i > 0 && priorityCutoffs[i-1] >= priorityCutoffs[i])
+          {
+               cout << "Warning: this value is less than or equal to the value";
+               cout << " of the previous cutoff." << endl;
+               cout << "Please insert a value greater than the previous: ";
+               in >> priorityCutoffs[i];
+          }
      }
      priorityCutoffs[numberOfPriorities-1] = maxPages;
      cout << endl;
@@ -290,22 +337,21 @@ double& failureProb, int& failureTime, int& numberOfPriorities, int*& priorityCu
 
 }
 
-void printResults(int& maxPages, int& printRate, int& numOfPrinters, int& numOfPrintJobs, unsigned int& seed, int clock, ostream& outfile)
+void printResults(int runtime, int pagesPrinted, double totalCost, int avgPrinterWait,
+     int numberOfPrinters, printerType printers[], ostream& outfile)
 {
-     //remind the user what they gave at the beginning
-     outfile << "---You gave the following information---" << endl;
-     outfile << "Number of print jobs----: " << numOfPrintJobs << endl;
-     outfile << "Maximum number of pages-: " << maxPages << endl;
-     outfile << "Rate of printing--------: " << printRate << endl;
-     outfile << "Number of printers------: " << numOfPrinters << endl;
-     if(seed == 0)
-           outfile << "You did not provide a seed." << endl;
-     else
-           outfile << "Seed value--------------: " << seed << endl;
-
-      //display results
-      outfile << "---Results of the simulation------------" << endl;
-      outfile << "Time Elapsed------------: " << clock - 1 << endl;
+     outfile << "The simulation ran for << " << runtime << " minute(s)." << endl;
+     outfile << "In the process, " << pagesPrinted << " were printed." << endl;
+     outfile << "This cost you $" << totalCost << "." << endl;
+     outfile << "On average, the printers had to wait " << avgPrinterWait << " minutes for a job." << endl;
+     for(int i = 0; i < numberOfPrinters; i++)
+     {
+          outfile << "Printer " << i << " handled " << printers[i].getJobs() << " jobs, ";
+          outfile << "printed " << printers[i].getTotalPagesPrinted() << " pages, ";
+          outfile << "and printed $" << printers[i].getTotalCost() << " worth of pages." << endl;
+          outfile << "It printed for " << printers[i].getTimePrinting() << " minutes, ";
+          outfile << "and was available " printers[i].getPercentUtilization() << "% of the time.";
+     }
 }
 
 void runSimulation(){
@@ -397,7 +443,7 @@ void runSimulation(){
                    //add print job to the queue
                    printJob.setPrintRequestType(priorityCutoffs,numberOfPriorities,pageNum,requestNumber);
                    pWaitingQueue.push(printJob, clock, *out);
-	           printJobsLeft--;//decrement print jobs left
+	              printJobsLeft--;//decrement print jobs left
                    requestNumber++;//print job id number
                }
            }
@@ -420,7 +466,25 @@ void runSimulation(){
          clock++;//update the clock time 
       }
       
-      //printResults(maxPages, printRate, numOfPrinters, numOfPrintJobs, seed, clock, *out);
+      int totalPagesPrinted = 0;
+      for(int i = 0; i < numOfPrinters; i++)
+      {
+            totalPagesPrinted += printers.getPrinter(i).getTotalPagesPrinted();
+      }
+
+      int totalCost = 0;
+      for(int i = 0; i < numOfPrinters; i++)
+      {
+            totalCost += printers.getPrinter(i).getTotalCost();
+      }
+
+      //This needs a value. I recommend allowing each printer to know how long is has waiting
+      //and making a function that calls that value. Then, before printResults is called,
+      //do a for loop like I did above for the other values and divide for the average.
+      int avgPrinterWait = 0;
+
+      printResults(clock, totalPagesPrinted, totalCost, avgPrinterWait, numberOfPrinters, printerListType printers, *out);
+
       //If a filename was given make sure to close it
       if(checkFile==1)
         outfile.close();
