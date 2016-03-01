@@ -43,13 +43,24 @@ class printerListType{
             //Postcondition: The specified printer is found by the printerID
             //and set to "busy", currentPrintJob = printJob, 
             //pagesToPrint = pages
+            //the totalCost and totalJobs of the printer are also updated
             void setPrinterBusy(int printerID, printRequestType printJob,
                                 int pages,int clock,ostream & outfile);
 
+            //Calculates and returns the total cost accumulated from all printers
+            int getTotalCost();
+ 
+            //Calculates and returns the total amount of pages printed from all printers
+            int getTotalPagesPrinted();
+         
             //Function to update the status of each printer
             //Postcondition: the pagesToPrint is decremented by the printRate
             //If pagesToPrint is zero or less the printer is set to "free"
             void updatePrinters(int clock, ostream& outfile);
+            
+            //Prints out the statistics about the printers, including total pages printed,
+            //total jobs, total cost, total time spent printing, percentage spent printing  
+            void printResults(ostream& outfile, int runtime);
       
       private:
             int numOfPrinters;

@@ -16,8 +16,9 @@ class printerType{
       public:
             //Default Constructor
             //Set the values of the instance variables to default values
-            //Postcondition: status is initialized to "free" and pagesToPrint,
-            //printRate, totalTime, are all initialized to 0.
+            //Postcondition: status and other boolean variables are initialized to "free", 
+            //"isWorking", and "printing" and pagesToPrint,
+            //printRate, totalTime, as well as the other new variables are all initialized to 0.
             printerType();
             
             //Function to determine if a printer is free (status = "free")
@@ -25,26 +26,26 @@ class printerType{
             //returns false
             bool isFree() const;
          
-            // 
+            //checks if the printer is in maintenance and returns true or false
             bool isInMaintenance() const;
 
-            //
+            //checks if the printer is offline and returns true or false
             bool isOffline() const;
 
             //Function to set a printer to busy when it receives a print job
             //Postcondition: status = "busy"
             void setBusy();
             
-            //  
+            //sets if the printer is in maintenance
             void setInMaintenance();
            
-            //
+            //sets if the printer is out of maintenance
             void setIsWorking();
 
-            //
+            //sets the printer offline so that the failure can be fixed
             void setOffline();
 
-            //
+            //sets if the printer is allowed to print (as in it isn't offline)
             void setPrinting();
 
             //Function to return the value of total time that the printer spent
@@ -65,39 +66,46 @@ class printerType{
             //Function to set the print rate for the printer
             void setPrintRate(int p);
             
-            //
+            //sets the amount of pages a printer can print until it has to go into
+            //maintenance
             void setMaintenanceLimit(int m);
 
-            //
+            //sets how long it takes to get a printer out of maintenance
             void setMaintenanceTime(int m);
 
-            //
+            //sets how much it costs per page to print
             void setCost(double c);
 
-            //
+            //sets the probability that a printer will fail at printing a job
             void setFailureProb(double f);
             
-            //
+            //sets how long it takes the printer to fix a failure
             void setFailureTime(int f);
 
             //Function to return how many pages are left to print
             //Postcondition: pagesToPrint is returned
             int getRemainingPagesToPrint() const;
             
-            //
+            //returns the total cost accumulated
             double getTotalCost();
  
-            //
+            //Checks whether a printer ran out of printer paper/ ink and needs to go 
+            //into maintenance
             void checkForMaintenance(ostream& outfile, int ID, int clock);
            
-            //
+            //Checks whether or not a printer was able to succeed in printing and if it needs to 
+            //go offline
             void checkForFailure(ostream& outfile, int ID, int clock);
 
-            //
+            //Updates the total cost the printer accumulated printing pages
             void updateTotalCost();
 
+            //Updates the total number of jobs the printer has had
+            void updateTotalJobs();
+
             //Function to decrease the number of pagesToPrint by the printing
-            //rate 
+            //rate, also increase the totalTime, decreases pages from the maintenanceLimit,
+            //and adds to the total amount of pages printed 
             //Postcondition: pagesToPrint -= printRate
             void decreasePagesToPrint(ostream& outfile, int ID, int clock);
 
@@ -112,9 +120,9 @@ class printerType{
             //Function to return the number of pages of the current print job
             //Postcondition: pages of the current print job returned
             int getCurrentPrintJobPages() const;
-
-            //Increases how many pages this printer has printed
-            void updateTotalPagesPrinted(int value);
+           
+            //Returns the total number of jobs the printer received
+            int getTotalJobs(); 
      
             //Returns how many total pages were printed at the time it is called
             int getTotalPagesPrinted();
@@ -137,4 +145,5 @@ class printerType{
             int fTValue;
             int totalTime;
             double totalCost;
+            int totalJobs;
 };

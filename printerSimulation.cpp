@@ -18,30 +18,37 @@
 using namespace std;
 
 //Function to print to the screen and ask for all of the simulation parameters
-//Postcondition: simulation parameters have value given by user
+//Postcondition: simulation parameters have value given by user also includes the variables that are different
+//per printer
 void setSimulationParameters(istream& in, int& maxPages, int*& printRate, double*& cost, int& numOfPrinters, int& numOfPrintJobs, unsigned int& seed, int& checkFile, int& maintenanceLimit, int& maintanenceTime, double& failureProb, int& failureTime, int& numberOfPriorities, int*& priorityCutoffs, double& avgJobs);
 //Function to return the random size of the print job
 //Postcondition: number of pages of a print job is returned
 int printJobArrival(int maxPages, int L, int* U, double* a);
-
+//Exectutes the function of the Poisson Distribution and returns the
+//result for a specific k
 double P(int k, double avgJobs);
-
+//Factorial function
 int fact(int x);
-
+//Returns how many different sections are created for the specific distribution
+//based on the average jobs per minute. This allows an array to be created to be used 
 int findKMax(double avgJobs);
-
+//Sets up the Poisson distribution array filling each element of the array with the distribution
+//cutoffs
 void setUpDist(double*& poissonDist, int k, double avgJobs);
-
+//With the page distribution a priority level is found and then
+//within that priority level a random number for the page number is found
 int findPrintJobs(double*& a, int k);
-
+//Sets up the distribution in an array 
+//in order to find which priority level the random set of pages is in
 void setUpPageDist(double*& a, int L);
 
 //Function designed to print out both the initial input and the results
 //uses ostream to output to whichever medium is sent, ex. cout or output file
-void printResults(int& maxPages, int*& printRate, double*& cost, int& numOfPrinters,
+/*void printResults(int& maxPages, int*& printRate, double*& cost, int& numOfPrinters,
      int& numOfPrintJobs, unsigned int& seed, int& checkFile, int& maintenanceLimit, int& maintanenceTime,
      double& failureProb, int& failureTime, int& numberOfPriorities, int*& priorityCutoffs, double& avgJobs);
-
+*/
+void printResults(int runtime, int avgPrinterWait,printerListType *printers, ostream& outfile);
 //Function to run the printer simulation
 //Postcondition: simulation is run calculating the results which are then displayed
 void runSimulation();
@@ -99,6 +106,7 @@ int findPrintJobs(double*& a, int k){
 }          
 
 void setUpPageDist(double*& a, int L){
+         //Special cases if have 1,2,or 3 priority levels
          if(L == 1)
             a[0] = 1;
          else if(L == 2){
@@ -120,6 +128,7 @@ void setUpPageDist(double*& a, int L){
 int printJobArrival(int maxPages, int L, int* U, double* a){
     int pages, priority;
     double random = ((double) rand() / (RAND_MAX));
+    //finds a priority level
     if(random <= a[0])
        priority = 1;
     else 
@@ -128,6 +137,7 @@ int printJobArrival(int maxPages, int L, int* U, double* a){
              priority = i+1;
              break;
           }
+    //Finds a random number of pages within priority level
     if(priority == 1){
         pages = rand() % U[0] + 1;
         return pages;
@@ -337,22 +347,16 @@ void setSimulationParameters(istream& in,int& maxPages, int*& printRate, double*
 
 }
 
-void printResults(int runtime, int pagesPrinted, double totalCost, int avgPrinterWait,
-     int numberOfPrinters, printerType printers[], ostream& outfile)
+void printResults(int runtime, int avgPrinterWait,
+     printerListType *printers, ostream& outfile)
 {
-     outfile << "The simulation ran for << " << runtime << " minute(s)." << endl;
-     outfile << "In the process, " << pagesPrinted << " were printed." << endl;
-     outfile << "This cost you $" << totalCost << "." << endl;
-     outfile << "On average, the printers had to wait " << avgPrinterWait << " minutes for a job." << endl;
-     for(int i = 0; i < numberOfPrinters; i++)
-     {
-          outfile << "Printer " << i << " handled " << printers[i].getJobs() << " jobs, ";
-          outfile << "printed " << printers[i].getTotalPagesPrinted() << " pages, ";
-          outfile << "and printed $" << printers[i].getTotalCost() << " worth of pages." << endl;
-          outfile << "It printed for " << printers[i].getTimePrinting() << " minutes, ";
-          outfile << "and was available " printers[i].getPercentUtilization() << "% of the time.";
-     }
-}
+     outfile << "The simulation ran for " << (runtime-1) << " minute(s)." << endl;
+     outfile << "In the process, " << printers->getTotalPagesPrinted() << " pages were printed." << endl;
+     outfile << "This cost you $" << printers->getTotalCost() << "." << endl;
+     //Shouldn't be printers, should be the printjobs
+     /*outfile << "On average, the printers had to wait " << avgPrinterWait << " minutes for a job." << endl;*/
+     printers->printResults(outfile, runtime);   
+} 
 
 void runSimulation(){
 
@@ -366,12 +370,13 @@ void runSimulation(){
      unsigned int seed;
      int requestNumber = 1, printerID;
      ofstream outfile;//output file
-     ifstream inputfile;
+     ifstream inputfile;//input file
      int checkFile;//tracks if filename was given
      ostream* out = &cout;//Prints to specified location 
-     istream* in = &cin;    
+     istream* in = &cin;//reads from specified location    
      char check; 
      
+    //Checks if the user wants to read in from a file
      cout<< "Want simulation parameters inputted from a file? [Y/N]: ";
      cin>> check;
      cout << endl;
@@ -414,6 +419,7 @@ void runSimulation(){
        out = &outfile;//changes which location is sent to functions
      } 
      
+     //Sets up all distributions
      int k = findKMax(avgJobs);
      poissonDist = new double[k+1];
      setUpDist(poissonDist,k,avgJobs);
@@ -436,9 +442,11 @@ void runSimulation(){
             
          //Get the number of pages of the print job if print jobs available
          if(printJobsLeft > 0){
+            //Gets the number of print jobs that arrived
             printJobs = findPrintJobs(poissonDist, k);
             if(printJobs > 0)
                for(int i = 1; i <= printJobs; i++){
+                   //get the number of pages of that print job
                    pageNum = printJobArrival(maxPages,numberOfPriorities,priorityCutoffs,pageDist);
                    //add print job to the queue
                    printJob.setPrintRequestType(priorityCutoffs,numberOfPriorities,pageNum,requestNumber);
@@ -459,33 +467,21 @@ void runSimulation(){
                printerID = printers.getFreePrinterID();//check for free printer
          }
                        
-         //after each run through of the loop check to see if all the 
-         //print jobs have been completed, thus the simulation is finished
-         //if no more print jobs AND no busy printers AND no jobs in the queue
   
          clock++;//update the clock time 
       }
-      
-      int totalPagesPrinted = 0;
-      for(int i = 0; i < numOfPrinters; i++)
-      {
-            totalPagesPrinted += printers.getPrinter(i).getTotalPagesPrinted();
-      }
-
-      int totalCost = 0;
-      for(int i = 0; i < numOfPrinters; i++)
-      {
-            totalCost += printers.getPrinter(i).getTotalCost();
-      }
+     
 
       //This needs a value. I recommend allowing each printer to know how long is has waiting
       //and making a function that calls that value. Then, before printResults is called,
       //do a for loop like I did above for the other values and divide for the average.
       int avgPrinterWait = 0;
 
-      printResults(clock, totalPagesPrinted, totalCost, avgPrinterWait, numberOfPrinters, printerListType printers, *out);
+      printResults(clock, avgPrinterWait,&printers, *out);
 
       //If a filename was given make sure to close it
       if(checkFile==1)
         outfile.close();
-}
+     if(check == 'Y' || check == 'y')
+        inputfile.close();
+}     

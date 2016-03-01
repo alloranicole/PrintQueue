@@ -86,10 +86,29 @@ void printerListType::setPrinterBusy(int printerID, printRequestType printJob,
       printers[printerID].setPagesToPrint(pages);
       printers[printerID].setCurrentPrintJob(printJob);
       printers[printerID].updateTotalCost();
+      printers[printerID].updateTotalJobs();
       //output what printer has what print job
       outfile << "Printer " << printerID + 1 << " now printing Print Job " <<
                  printJob.getRequestNumber() << " of \n" << 
                  printJob.getNumberOfPages() << " pages, at time " << clock << endl;
+}
+
+int printerListType::getTotalPagesPrinted(){
+      int totalPagesPrinted = 0;
+      for(int i = 0; i < numOfPrinters; i++)
+      {
+            totalPagesPrinted += printers[i].getTotalPagesPrinted();
+      }
+      return totalPagesPrinted;
+}
+
+int printerListType::getTotalCost(){
+      int totalCost = 0;
+      for(int i = 0; i < numOfPrinters; i++)
+      {
+            totalCost += printers[i].getTotalCost();
+      }
+      return totalCost;
 }
 
 void printerListType::updatePrinters(int clock, ostream& outfile){
@@ -111,7 +130,18 @@ void printerListType::updatePrinters(int clock, ostream& outfile){
       }
 }
 
-
+void printerListType::printResults(ostream& outfile, int runtime){
+      double percentage;
+      for(int i = 0; i < numOfPrinters; i++){
+          outfile << "Printer " << (i+1) << " handled " << printers[i].getTotalJobs() << " jobs, ";
+          outfile << "printed " << printers[i].getTotalPagesPrinted() << " pages, ";
+          outfile << "and printed $" << printers[i].getTotalCost() << " worth of pages." << endl;
+          outfile << "It printed for " << printers[i].getTotalTime() << " minutes, ";
+          percentage = (double) printers[i].getTotalTime()/runtime;
+          percentage *= 100;
+          outfile << "and was available "<< percentage << "% of the time." << endl;
+       }
+}
 
 
 

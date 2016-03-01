@@ -112,10 +112,6 @@ double printerType::getTotalCost(){
        return totalCost;
 }
 
-//May have to move to the printerListType because
-//will not be able to get the printer ID
-//Or.... I could send the printer ID to this function
-//(ostream& outfile, int ID, int clock)
 void printerType::checkForMaintenance(ostream& outfile, int ID, int clock){
        if(maintenanceLimit <= 0 && !isInMaintenance()){
           setInMaintenance();
@@ -149,6 +145,10 @@ void printerType::checkForFailure(ostream& outfile, int ID, int clock){
            outfile << "Printer " << ID << " is no longer offline at time "
                         << clock << endl;
        }
+}
+
+void printerType::updateTotalJobs(){
+       totalJobs++;
 }
 
 void printerType::updateTotalCost(){
@@ -185,9 +185,8 @@ int printerType::getCurrentPrintJobPages() const{
        return currentPrintJob.getNumberOfPages();
 }
 
-void printerType::updateTotalPagesPrinted(int value)
-{
-     totalPagesPrinted += value;
+int printerType::getTotalJobs(){
+       return totalJobs;
 }
 
 int printerType::getTotalPagesPrinted()
