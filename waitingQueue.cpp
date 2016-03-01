@@ -22,6 +22,15 @@ waitingQueue::waitingQueue(int numQueues)
 {
      NumberOfPriorities = numQueues;
      list = new queue<printRequestType>[numQueues];
+     numberOfJobs = new int[numQueues];
+     pagesPrinted = new int[numQueues];
+     waitTime = new int[numQueues];
+     for(int i = 0; i < numQueues; i++)
+     {
+          numberOfJobs[i] = 0;
+          pagesPrinted[i] = 0;
+          waitTime[i] = 0;
+     }
 }
 
 waitingQueue::waitingQueue()
@@ -34,7 +43,10 @@ void waitingQueue::push(printRequestType pushMe, int clock, ostream& out)
 {
      out << "At time unit " << clock << " the following item entered the waiting queue:" << endl;
      pushMe.print(out);
+     pushMe.setTimeEnter(clock);
      list[pushMe.getPriority()-1].push(pushMe);
+     numberOfJobs[pushMe.getPriority()-1]++;
+     pagesPrinted[pushMe.getPriority()-1] += pushMe.getNumberOfPages();
 }
 
 bool waitingQueue::empty()
@@ -96,10 +108,9 @@ printRequestType waitingQueue::back()
      return back;
 }
 
-void waitingQueue::pop(printRequestType pushMe,int clock, ostream& out)
+void waitingQueue::pop(int clock, ostream& out)
 {
      out << "At time unit " << clock << " the following item exited the waiting queue:" << endl;
-     pushMe.print(out);
      bool found = false;
      int i = 0;
      while(found == false && i < NumberOfPriorities)
@@ -107,10 +118,44 @@ void waitingQueue::pop(printRequestType pushMe,int clock, ostream& out)
           if(list[i].empty() == false)
           {
                found = true;
+               list[i].front().print(out);
+               waitTime[i] += clock - list[i].front().getTimeEnter();
                list[i].pop();
           }
           i++;
      }
      if(found == false)
           cout << "There is no front element in an empty queue." << endl;
+}
+
+int waitingQueue::getNumberOfJobs(int priority)
+{
+     return numberOfJobs[priority];
+}
+
+int waitingQueue::getPagesPrinted(int priority)
+{
+     return pagesPrinted[priority];
+}
+
+int waitingQueue::getWaitTime(int priority)
+{
+     return pagesPrinted[priority];
+}
+
+double waitingQueue::getAgvWaitTime(int priority)
+{
+     double average = waitTime[priority];
+     average = average / (double) numberOfJobs[priority];
+     return average;     
+}
+
+void waitingQueue::printResults(ostream& out, int clock)
+{
+     for(int i = 0; i < NumberOfPriorities; i++)
+     {
+          out << "Priority level " << i + 1 << " handled " << getNumberOfJobs(i) << " job(s)." << endl;
+          out << "It printed " << getPagesPrinted(i) << " page(s)." << endl;
+          out << "The average wait time was " << getAgvWaitTime(i) << " minutes." << endl;
+     }
 }

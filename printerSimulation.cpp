@@ -48,7 +48,7 @@ void setUpPageDist(double*& a, int L);
      int& numOfPrintJobs, unsigned int& seed, int& checkFile, int& maintenanceLimit, int& maintanenceTime,
      double& failureProb, int& failureTime, int& numberOfPriorities, int*& priorityCutoffs, double& avgJobs);
 */
-void printResults(int runtime, int avgPrinterWait,printerListType *printers, ostream& outfile);
+void printResults(int runtime, waitingQueue *wait, printerListType *printers, ostream& outfile);
 //Function to run the printer simulation
 //Postcondition: simulation is run calculating the results which are then displayed
 void runSimulation();
@@ -223,7 +223,6 @@ void setSimulationParameters(istream& in,int& maxPages, int*& printRate, double*
      {
         cout << "Use the default print rate? (default = 10 pages per minute) [y/n]: ";
         in >> check;
-        cout << endl;
         if(check == 'Y' || check == 'y')
         {
             for(int i = 0; i < numOfPrinters; i++)
@@ -252,6 +251,7 @@ void setSimulationParameters(istream& in,int& maxPages, int*& printRate, double*
      in >> check;
      if(check == 'Y' || check == 'y')
      {
+
           maintenanceTime = 10;
           cout << endl;
      }
@@ -287,7 +287,7 @@ void setSimulationParameters(istream& in,int& maxPages, int*& printRate, double*
      cout << "Separate cost per page for the " << numOfPrinters << 
              " printers? [Y/N]: ";
      in >> check;
-     cout << endl; 
+     cout << endl;
 
      if(check == 'Y' || check == 'y'){
         for(int i = 0; i < numOfPrinters; i++){
@@ -295,13 +295,28 @@ void setSimulationParameters(istream& in,int& maxPages, int*& printRate, double*
             in >> cost[i];
             cout << endl; 
           }  
-     }else{
-        cout << "Enter the cost per page for printers: ";
-        in >> cost[0];
-        cout << endl;       
-        for(int i = 1; i < numOfPrinters; i++){
-            cost[i] = cost[0];
-        }
+     }
+     else
+     {
+          cout << "Use default cost per page? (default = $0.05) [y/n]: ";
+          cin >> check;
+          if(check == 'Y' || check == 'y')
+          {
+             for(int i = 0; i < numOfPrinters; i++)
+             {
+                  cost[i] = 0.05;
+             }
+          }
+          else
+          {
+             cout << "Enter the cost per page for printers: ";
+             in >> cost[0];
+             cout << endl;       
+             for(int i = 1; i < numOfPrinters; i++)
+             {
+                 cost[i] = cost[0];
+             }
+          }
      }
 
      cout << "Enter number of priority levels: ";
@@ -347,15 +362,18 @@ void setSimulationParameters(istream& in,int& maxPages, int*& printRate, double*
 
 }
 
-void printResults(int runtime, int avgPrinterWait,
-     printerListType *printers, ostream& outfile)
+void printResults(int runtime, waitingQueue *wait, printerListType *printers, ostream& outfile)
 {
+     outfile << endl;
+     outfile << "-----------------------------------------------------------------------------" << endl;
+     outfile << endl;
      outfile << "The simulation ran for " << (runtime-1) << " minute(s)." << endl;
      outfile << "In the process, " << printers->getTotalPagesPrinted() << " pages were printed." << endl;
      outfile << "This cost you $" << printers->getTotalCost() << "." << endl;
      //Shouldn't be printers, should be the printjobs
      /*outfile << "On average, the printers had to wait " << avgPrinterWait << " minutes for a job." << endl;*/
-     printers->printResults(outfile, runtime);   
+     wait->printResults(outfile,runtime);
+     printers->printResults(outfile,runtime);   
 } 
 
 void runSimulation(){
@@ -463,21 +481,15 @@ void runSimulation(){
                printJob = pWaitingQueue.front();//get print job in front
                //move print job to printer
                printers.setPrinterBusy(printerID,printJob,printJob.getNumberOfPages(),clock, *out);
-               pWaitingQueue.pop(printJob, clock, *out);
+               pWaitingQueue.pop(clock, *out);
                printerID = printers.getFreePrinterID();//check for free printer
          }
                        
   
          clock++;//update the clock time 
       }
-     
 
-      //This needs a value. I recommend allowing each printer to know how long is has waiting
-      //and making a function that calls that value. Then, before printResults is called,
-      //do a for loop like I did above for the other values and divide for the average.
-      int avgPrinterWait = 0;
-
-      printResults(clock, avgPrinterWait,&printers, *out);
+      printResults(clock, &pWaitingQueue, &printers, *out);
 
       //If a filename was given make sure to close it
       if(checkFile==1)

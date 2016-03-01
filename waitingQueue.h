@@ -66,7 +66,7 @@ class waitingQueue
                //back of first non-empty queue is returned
                //message is given if queue was empty
 
-          void pop(printRequestType pushMe, int clock, ostream& out);
+          void pop(int clock, ostream& out);
           //searches the queues from first to last to find 
           //the first queue with an item. The front item of 
           //that queue is popped.
@@ -74,7 +74,29 @@ class waitingQueue
                //front of first non-empty queue is popped
                //message is given if queue was empty
 
+          int getNumberOfJobs(int priority);
+          //returns the value of numberOfJobs at the array position "priority"
+          //post condition: numberOfJobs[priority] is returned
+
+          int getPagesPrinted(int priority);
+          //returns the value of pagesPrinted at the array position "priority"
+          //post condition: pagesPrinted[priority] is returned
+
+          int getWaitTime(int priority);
+          //returns the value of waitTime at the array position "priority"
+          //post condition: waitTime[priority] is returned
+          
+          double getAgvWaitTime(int priority);
+          //returns the average wait time of priority queue "priority"
+          //post condition: waitTime[priority] / numberOfJobs[priority] is returned
+          
+          void printResults(ostream& out, int clock);
+          //displays the requested information per priority level
+
      private:
           int NumberOfPriorities;
           queue<printRequestType> *list;
+          int *numberOfJobs;
+          int *pagesPrinted;
+          int *waitTime;
 };

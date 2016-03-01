@@ -26,6 +26,7 @@ void printRequestType::setPrintRequestType(int priorCut[], int numPrior, int num
      }     
      NumberOfPages = numPage;
      RequestNumber = numReq;
+     timeEnter = 0;
 }
 
 printRequestType::printRequestType(int priorCut[], int numPrior, int numPage, int numReq)
@@ -43,6 +44,7 @@ printRequestType::printRequestType(int priorCut[], int numPrior, int numPage, in
      }     
      NumberOfPages = numPage;
      RequestNumber = numReq;
+     timeEnter = 0;
 }
 
 printRequestType::printRequestType()
@@ -65,6 +67,16 @@ int printRequestType::getPriority() const
 int printRequestType::getRequestNumber() const
 {
      return RequestNumber;
+}
+
+int printRequestType::getTimeEnter() const
+{
+     return timeEnter;
+}
+
+void printRequestType::setTimeEnter(int time)
+{
+     timeEnter = time;
 }
 
 void printRequestType::print(ostream& out)

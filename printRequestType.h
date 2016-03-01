@@ -46,6 +46,10 @@ class printRequestType
           int getRequestNumber() const;
           //returns the value of the private variable RequestNumber.
           //Postcondition: Value of RequestNumber is returned.
+     
+          int getTimeEnter() const;
+          //returns the value of the private variable timeEnter.
+          //Postcondition: Value of timeEnter is returned.
 
           void print(ostream& out);
           //displays all of the vaiables for testing purposes or
@@ -53,10 +57,15 @@ class printRequestType
           //postcondition: NumberOfPages, Priority, and RequestNumber
                //are printed out to the screen.
 
+          void setTimeEnter(int time);
+          //sets the variable "timeEnter" to equal the input "time"
+          //post condition: timeEnter = time
+
      private:
           int NumberOfPages; //how many pages this job has
           int Priority; //the importance of this job, smaller = more important
           int RequestNumber; //when the job was made compared to other jobs
+          int timeEnter;
 };
 
 #endif
